@@ -9,11 +9,12 @@ var Storage = (function() {
                 // so let's convert booleans and numbers
                 // to be true booleans and numbers
                 // and return those
-                if (_value===null) {
+                if (_value===null || _value===undefined) {
                     // localStorage["foo"] returns null
-                    // even if foo isn't there at all.
-                    // really foo is undefined, so we're
-                    // returning accordingly
+                    // in some browsers even if 
+                    // foo isn't there at all.
+                    // since foo is really undefined,
+                    // we are returning accordingly
                     return undefined;
                 }
                 if (_value==="true") {
@@ -95,4 +96,3 @@ var Storage = (function() {
         }
     };
 }());
-var local_storage = Storage.Local;
