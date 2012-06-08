@@ -1,4 +1,4 @@
-// wrapper for localStorage
+// wrapper for localStorage and sessionStorage
 var Storage = (function() {
     var _get = function(_type) {
         var _storage = window[_type];
