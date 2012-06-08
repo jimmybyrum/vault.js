@@ -39,3 +39,30 @@ Storage.Local.get("age");
 // returns the number
 33
 ```
+
+##### remove
+```
+Storage.Session.remove("my_object");
+// removes my_object from sessionStorage
+
+Storage.Local.remove("my_array");
+// removes my_array from localStorage
+```
+
+##### clear
+```
+Storage.Session.clear();
+// clears all items from sessionStorage
+
+Storage.Local.clear();
+// clears all items from localStorage
+```
+
+##### list
+```
+Storage.Session.clear();
+// lists all items in sessionStorage in the console
+
+Storage.Local.clear();
+// lists all items in localStorage in the console
+```
