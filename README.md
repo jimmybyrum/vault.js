@@ -56,6 +56,10 @@ Storage.Local.list();
 
 ##### isSupported
 returns a boolean to indicate if local and session storage are supported
+```
+Storage.Session.isSupported();
+Storage.Local.isSupported();
+```
 
 #### TODO
 - handle storage limit errors
