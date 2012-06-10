@@ -53,3 +53,9 @@ lists all items in Storage in the console
 Storage.Session.list();
 Storage.Local.list();
 ```
+
+####
+- add Storage.Cookie
+- handle storage limit errors
+- add support to request more storage
+
