@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>storage.js demo</title>
+<style type="text/css">
+ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+ol > li {
+    margin-bottom: 10px;
+}
+input {
+    width: 200px;
+}
+</style>
+</head>
+<body>
+<ol>
+    <li>Open the console</li>
+    <li>Select storage type:
+        <select id="type">
+            <option value="Local">localStorage</option>
+            <option value="Session">sessionStorage</option>
+            <option value="Cookie">Cookie</option>
+        </select>
+    </li>
+    <li>
+        <form id="set">
+            <ul>
+                <li>name = <input type="text" value="Jimmy" id="name" placeholder="name"></li>
+                <li>age = <input type="number" value="33" id="number" placeholder="age"></li>
+                <li>array = <input type="text" value="[7,13,27]" id="arr"></li>
+                <li>object = <input type="text" value='{ "name":"Jimmy", "age":33 }' id="obj"></li>
+            </ul>
+            <input type="submit" value="set values">
+        </form>
+    </li>
+    <li><a id="list" href="#list">List all values</a></li>
+    <li><a id="clear" href="#clear">Clear all values</a></li>
+</ol>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js" type="text/javascript"></script>
+<script src="storage.js" type="text/javascript"></script>
+<script type="text/javascript">
+$("#set").submit(function(e) {
+    e.preventDefault();
+    var _type = $("#type").val();
+    var _name = $("#name").val();
+    console.log('executing: Storage.'+_type+'.set("name", '+_name+');');
+    Storage[_type].set("name", _name);
+    var _number = $("#number").val();
+    console.log('executing: Storage.'+_type+'.set("age", '+_number+');');
+    Storage[_type].set("age", _number);
+    var _arr = $("#arr").val();
+    console.log('executing: Storage.'+_type+'.set("arr", '+_arr+');');
+    Storage[_type].set("arr", _arr);
+    var _obj = $("#obj").val();
+    console.log('executing: Storage.'+_type+'.set("obj", '+_obj+');');
+    Storage[_type].set("obj", _obj);
+});
+$("#list").click(function(e) {
+    e.preventDefault();
+    var _type = $("#type").val();
+    console.log('executing: Storage.'+_type+'.list();');
+    Storage[_type].list();
+});
+$("#clear").click(function(e) {
+    e.preventDefault();
+    var _type = $("#type").val();
+    console.log('executing: Storage.'+_type+'.clear();');
+    Storage[_type].clear(); 
+});
+</script>
+</body>
+</html>
