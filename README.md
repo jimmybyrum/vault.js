@@ -55,7 +55,6 @@ Storage.Local.list();
 ```
 
 #### TODO
-- add Storage.Cookie
 - handle storage limit errors
 - add support to request more storage
-
+- handle storage events
