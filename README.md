@@ -3,6 +3,9 @@ storage.js
 
 wrapper for localStorage, sessionStorage and document.cookie that sets and gets true values
 
+#### Demo
+http://jimmybyrum.github.com/storage.js/
+
 #### Usage
 
 ##### set and get
