@@ -1,35 +1,44 @@
 // wrapper for localStorage and sessionStorage
 var Storage = (function() {
+    var _parse = function(_value) {
+        // everything in local storage is a string
+        // so let's convert booleans and numbers
+        // to be true booleans and numbers
+        // and return those
+        if (_value===null || _value===undefined) {
+            // localStorage["foo"] returns null
+            // in some browsers even if 
+            // foo isn't there at all.
+            // since foo is really undefined,
+            // we are returning accordingly
+            return undefined;
+        }
+        if (_value==="true") {
+            return true;
+        }
+        if (_value==="false") {
+            return false;
+        }
+        if (!isNaN(_value)) {
+            return parseFloat(_value);
+        }
+        if (_value.indexOf && (_value.indexOf("{")===0 || _value.indexOf("[")===0) && window.JSON!==undefined) {
+            return JSON.parse(_value);
+        }
+        return _value;
+    };
+    var _prepare = function(_value) {
+        if (typeof _value==="object" && window.JSON!==undefined) {
+            return JSON.stringify(_value);
+        }
+        return _value;
+    };
     var _get = function(_type) {
         var _storage = window[_type];
         return function(_key) {
             if (_storage!==undefined) {
                 var _value = _storage[_key];
-                // everything in local storage is a string
-                // so let's convert booleans and numbers
-                // to be true booleans and numbers
-                // and return those
-                if (_value===null || _value===undefined) {
-                    // localStorage["foo"] returns null
-                    // in some browsers even if 
-                    // foo isn't there at all.
-                    // since foo is really undefined,
-                    // we are returning accordingly
-                    return undefined;
-                }
-                if (_value==="true") {
-                    return true;
-                }
-                if (_value==="false") {
-                    return false;
-                }
-                if (!isNaN(_value)) {
-                    return parseFloat(_value);
-                }
-                if (_value.indexOf && (_value.indexOf("{")===0 || _value.indexOf("[")===0) && window.JSON!==undefined) {
-                    return JSON.parse(_value);
-                }
-                return _value;
+                return _parse(_value);
             }
             return undefined;
         };
@@ -38,10 +47,7 @@ var Storage = (function() {
         var _storage = window[_type];
         return function(_key, _value) {
             if (_storage!==undefined) {
-                if (typeof _value==="object" && window.JSON!==undefined) {
-                    _value = JSON.stringify(_value);
-                }
-                return _storage.setItem(_key, _value);
+                _storage.setItem(_key, _prepare(_value));
             }
             return undefined;
         };
@@ -70,10 +76,10 @@ var Storage = (function() {
             if (_storage!==undefined) {
                 var i, il=_storage.length;
                 if (il===0) {
-                    return "0 items in "+_type;
+                    return "No cookies set";
                 }
                 for (i in _storage) {
-                    console.log(i, "=", _storage[i]);
+                    console.log(i, "=", _parse(_storage[i]));
                 }
             }
             return undefined;
@@ -93,6 +99,51 @@ var Storage = (function() {
             remove: _remove("sessionStorage"),
             clear: _clear("sessionStorage"),
             list: _list("sessionStorage")
+        },
+        Cookie: {
+            get: function(_cookie) {
+                var _cookies = document.cookie.split(";");
+                var c, cl=_cookies.length;
+                for (c=0; c<cl; c++) {
+                    var _pair = _cookies[c].split("=");
+                    _pair[0] = _pair[0].replace(/^[ ]/, "");
+                    if (_pair[0] === _cookie) {
+                        return _parse(_pair[1]);
+                    }
+                }
+                return undefined;
+            },
+            set: function(_key, _value, _days, _path) {
+                var _expires = "";
+                if (_days!==undefined) {
+                    var _date = new Date();
+                    _date.setDate(_date.getDate()+_days);
+                    _expires = "; expires=" + _date.toUTCString();
+                }
+                var _value = _prepare(_value) + _expires + (_path===undefined ? "" : "; path="+_path);
+                document.cookie = _key + "=" + _value;
+            },
+            remove: function(_key) {
+                this.set(_key, "", -1);
+            },
+            clear: function() {
+                var _cookies = document.cookie.split(";");
+                var c, cl=_cookies.length;
+                for (c=0; c<cl; c++) {
+                    var _pair = _cookies[c].split("=");
+                    _pair[0] = _pair[0].replace(/^[ ]/, "");
+                    this.set(_pair[0], "", -1);
+                }
+            },
+            list: function() {
+                var _cookies = document.cookie.split(";");
+                var c, cl=_cookies.length;
+                for (c=0; c<cl; c++) {
+                    var _pair = _cookies[c].split("=");
+                    _pair[0] = _pair[0].replace(/^[ ]/, "");
+                    console.log(_pair[0], "=", _parse(_pair[1]));
+                }
+            }
         }
     };
 }());
