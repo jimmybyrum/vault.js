@@ -1,4 +1,4 @@
-// wrapper for localStorage and sessionStorage
+// wrapper for localStorage, sessionStorage and document.cookie
 var Storage = (function() {
     var _parse = function(_value) {
         // everything in local storage is a string
@@ -85,65 +85,76 @@ var Storage = (function() {
             return undefined;
         };
     };
-    return {
-        Local: {
-            get: _get("localStorage"),
-            set: _set("localStorage"),
-            remove: _remove("localStorage"),
-            clear: _clear("localStorage"),
-            list: _list("localStorage")
-        },
-        Session: {
-            get: _get("sessionStorage"),
-            set: _set("sessionStorage"),
-            remove: _remove("sessionStorage"),
-            clear: _clear("sessionStorage"),
-            list: _list("sessionStorage")
-        },
-        Cookie: {
-            get: function(_cookie) {
-                var _cookies = document.cookie.split(";");
-                var c, cl=_cookies.length;
-                for (c=0; c<cl; c++) {
-                    var _pair = _cookies[c].split("=");
-                    _pair[0] = _pair[0].replace(/^[ ]/, "");
-                    if (_pair[0] === _cookie) {
-                        return _parse(_pair[1]);
-                    }
-                }
-                return undefined;
-            },
-            set: function(_key, _value, _days, _path) {
-                var _expires = "";
-                if (_days!==undefined) {
-                    var _date = new Date();
-                    _date.setDate(_date.getDate()+_days);
-                    _expires = "; expires=" + _date.toUTCString();
-                }
-                var _value = _prepare(_value) + _expires + (_path===undefined ? "" : "; path="+_path);
-                document.cookie = _key + "=" + _value;
-            },
-            remove: function(_key) {
-                this.set(_key, "", -1);
-            },
-            clear: function() {
-                var _cookies = document.cookie.split(";");
-                var c, cl=_cookies.length;
-                for (c=0; c<cl; c++) {
-                    var _pair = _cookies[c].split("=");
-                    _pair[0] = _pair[0].replace(/^[ ]/, "");
-                    this.set(_pair[0], "", -1);
-                }
-            },
-            list: function() {
-                var _cookies = document.cookie.split(";");
-                var c, cl=_cookies.length;
-                for (c=0; c<cl; c++) {
-                    var _pair = _cookies[c].split("=");
-                    _pair[0] = _pair[0].replace(/^[ ]/, "");
-                    console.log(_pair[0], "=", _parse(_pair[1]));
+    var _isSupported = function(_type) {
+        var _storage = window[_type];
+        return function() {
+            return _storage!==undefined;
+        };
+    };
+    var _local = {
+        get: _get("localStorage"),
+        set: _set("localStorage"),
+        remove: _remove("localStorage"),
+        clear: _clear("localStorage"),
+        list: _list("localStorage"),
+        isSupported: _isSupported("localStorage")
+    };
+    var _session = {
+        get: _get("sessionStorage"),
+        set: _set("sessionStorage"),
+        remove: _remove("sessionStorage"),
+        clear: _clear("sessionStorage"),
+        list: _list("sessionStorage"),
+        isSupported: _isSupported("sessionStorage")
+    };
+    var _cookie = {
+        get: function(_cookie) {
+            var _cookies = document.cookie.split(";");
+            var c, cl=_cookies.length;
+            for (c=0; c<cl; c++) {
+                var _pair = _cookies[c].split("=");
+                _pair[0] = _pair[0].replace(/^[ ]/, "");
+                if (_pair[0] === _cookie) {
+                    return _parse(_pair[1]);
                 }
             }
+            return undefined;
+        },
+        set: function(_key, _value, _days, _path) {
+            var _expires = "";
+            if (_days!==undefined) {
+                var _date = new Date();
+                _date.setDate(_date.getDate()+_days);
+                _expires = "; expires=" + _date.toUTCString();
+            }
+            var _value = _prepare(_value) + _expires + (_path===undefined ? "" : "; path="+_path);
+            document.cookie = _key + "=" + _value;
+        },
+        remove: function(_key) {
+            this.set(_key, "", -1);
+        },
+        clear: function() {
+            var _cookies = document.cookie.split(";");
+            var c, cl=_cookies.length;
+            for (c=0; c<cl; c++) {
+                var _pair = _cookies[c].split("=");
+                _pair[0] = _pair[0].replace(/^[ ]/, "");
+                this.set(_pair[0], "", -1);
+            }
+        },
+        list: function() {
+            var _cookies = document.cookie.split(";");
+            var c, cl=_cookies.length;
+            for (c=0; c<cl; c++) {
+                var _pair = _cookies[c].split("=");
+                _pair[0] = _pair[0].replace(/^[ ]/, "");
+                console.log(_pair[0], "=", _parse(_pair[1]));
+            }
         }
+    };
+    return {
+        Local: _local,
+        Session: _session,
+        Cookie: _cookie
     };
 }());
