@@ -54,6 +54,9 @@ Storage.Session.list();
 Storage.Local.list();
 ```
 
+##### isSupported
+returns a boolean to indicate if local and session storage are supported
+
 #### TODO
 - handle storage limit errors
 - add support to request more storage
