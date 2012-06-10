@@ -1,7 +1,7 @@
 storage.js
 ===============
 
-wrapper for localStorage and sessionStorage that returns true values
+wrapper for localStorage, sessionStorage and document.cookie that sets and gets true values
 
 #### Usage
 
