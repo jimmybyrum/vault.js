@@ -33,79 +33,47 @@ var Storage = (function() {
         }
         return _value;
     };
-    var _get = function(_type) {
+    var _notSupported = function() {
+        return undefined;
+    };
+    var _setup = function(_type) {
         var _storage = window[_type];
-        return function(_key) {
-            if (_storage!==undefined) {
+        if (_storage===undefined) {
+            return {
+                get: _notSupported,
+                set: _notSupported,
+                remove: _notSupported,
+                clear: _notSupported,
+                list: _notSupported,
+                isSupported: function() { return false; }
+            }
+        }
+        return {
+            get: function(_key) {
                 var _value = _storage[_key];
                 return _parse(_value);
-            }
-            return undefined;
-        };
-    };
-    var _set = function(_type) {
-        var _storage = window[_type];
-        return function(_key, _value) {
-            if (_storage!==undefined) {
-                _storage.setItem(_key, _prepare(_value));
-            }
-            return undefined;
-        };
-    };
-    var _remove = function(_type) {
-        var _storage = window[_type];
-        return function(_key) {
-            if (_storage!==undefined) {
+            },
+            set: function(_key, _value) {
+                return _storage.setItem(_key, _prepare(_value));
+            },
+            remove: function(_key) {
                 return _storage.removeItem(_key);
-            }
-            return undefined;
-        };
-    };
-    var _clear = function(_type) {
-        var _storage = window[_type];
-        return function() {
-            if (_storage!==undefined) {
-                _storage.clear();
-            }
-            return undefined; 
-        };
-    };
-    var _list = function(_type) {
-        var _storage = window[_type];
-        return function() {
-            if (_storage!==undefined) {
+            },
+            clear: function() {
+                return _storage.clear();
+            },
+            list: function() {
                 var i, il=_storage.length;
                 if (il===0) {
-                    return "No cookies set";
+                    console.log("0 items in "+_type);
+                    return undefined;
                 }
                 for (i in _storage) {
                     console.log(i, "=", _parse(_storage[i]));
                 }
-            }
-            return undefined;
-        };
-    };
-    var _isSupported = function(_type) {
-        var _storage = window[_type];
-        return function() {
-            return _storage!==undefined;
-        };
-    };
-    var _local = {
-        get: _get("localStorage"),
-        set: _set("localStorage"),
-        remove: _remove("localStorage"),
-        clear: _clear("localStorage"),
-        list: _list("localStorage"),
-        isSupported: _isSupported("localStorage")
-    };
-    var _session = {
-        get: _get("sessionStorage"),
-        set: _set("sessionStorage"),
-        remove: _remove("sessionStorage"),
-        clear: _clear("sessionStorage"),
-        list: _list("sessionStorage"),
-        isSupported: _isSupported("sessionStorage")
+            },
+            isSupported: function() { return true; }
+        }
     };
     var _cookie = {
         get: function(_cookie) {
@@ -145,6 +113,10 @@ var Storage = (function() {
         list: function() {
             var _cookies = document.cookie.split(";");
             var c, cl=_cookies.length;
+            if (cl===0) {
+                console.log("No cookies set");
+                return undefined;
+            }
             for (c=0; c<cl; c++) {
                 var _pair = _cookies[c].split("=");
                 _pair[0] = _pair[0].replace(/^[ ]/, "");
@@ -153,8 +125,8 @@ var Storage = (function() {
         }
     };
     return {
-        Local: _local,
-        Session: _session,
+        Local: _setup("localStorage"),
+        Session: _setup("sessionStorage"),
         Cookie: _cookie
     };
 }());
