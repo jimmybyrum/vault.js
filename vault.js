@@ -1,5 +1,5 @@
 // wrapper for localStorage, sessionStorage and document.cookie
-var Storage = (function() {
+var Vault = (function() {
     var _parse = function(_value) {
         // everything in local storage is a string
         // so let's convert booleans and numbers
