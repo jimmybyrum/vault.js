@@ -9,20 +9,20 @@ http://jimmybyrum.github.com/storage.js/
 #### Usage
 ##### set and get
 ```
-Storage.Session.set("foo", "bar");
-Storage.Session.get("foo");
+Vault.Session.set("foo", "bar");
+Vault.Session.get("foo");
 // returns "bar"
 
-Storage.Local.set("my_array", [1,2,3,4]);
-Storage.Local.get("my_array");
+Vault.Local.set("my_array", [1,2,3,4]);
+Vault.Local.get("my_array");
 // [1,2,3,4]
 
-Storage.Session.set("my_object", {
+Vault.Session.set("my_object", {
   foo: "bar",
   an_array: [1,2,3],
   year: 2012
 });
-Storage.Session.get("my_object");
+Vault.Session.get("my_object");
 // {
 //   foo: "bar",
 //   an_array: [1,2,3],
@@ -30,37 +30,37 @@ Storage.Session.get("my_object");
 // }
 
 
-Storage.Local.set("age", 33);
-Storage.Local.get("age");
+Vault.Local.set("age", 33);
+Vault.Local.get("age");
 // returns the number 33
 ```
 
 ##### remove
 removes an item
 ```
-Storage.Session.remove("my_object");
-Storage.Local.remove("my_array");
+Vault.Session.remove("my_object");
+Vault.Local.remove("my_array");
 ```
 
 ##### clear
 clears all items
 ```
-Storage.Session.clear();
-Storage.Local.clear();
+Vault.Session.clear();
+Vault.Local.clear();
 ```
 
 ##### list
-lists all items in Storage in the console
+lists all items in Vault in the console
 ```
-Storage.Session.list();
-Storage.Local.list();
+Vault.Session.list();
+Vault.Local.list();
 ```
 
 ##### isSupported
 returns a boolean to indicate if local and session storage are supported
 ```
-Storage.Session.isSupported();
-Storage.Local.isSupported();
+Vault.Session.isSupported();
+Vault.Local.isSupported();
 ```
 
 #### TODO
