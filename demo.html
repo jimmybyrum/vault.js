@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>storage.js demo</title>
+<title>vault.js demo</title>
 <style type="text/css">
 ul {
     list-style: none;
@@ -48,29 +48,29 @@ $("#set").submit(function(e) {
     e.preventDefault();
     var _type = $("#type").val();
     var _name = $("#name").val();
-    console.log('executing: Storage.'+_type+'.set("name", '+_name+');');
-    Storage[_type].set("name", _name);
+    console.log('executing: Vault.'+_type+'.set("name", '+_name+');');
+    Vault[_type].set("name", _name);
     var _number = $("#number").val();
-    console.log('executing: Storage.'+_type+'.set("age", '+_number+');');
-    Storage[_type].set("age", _number);
+    console.log('executing: Vault.'+_type+'.set("age", '+_number+');');
+    Vault[_type].set("age", _number);
     var _arr = $("#arr").val();
-    console.log('executing: Storage.'+_type+'.set("arr", '+_arr+');');
-    Storage[_type].set("arr", _arr);
+    console.log('executing: Vault.'+_type+'.set("arr", '+_arr+');');
+    Vault[_type].set("arr", _arr);
     var _obj = $("#obj").val();
-    console.log('executing: Storage.'+_type+'.set("obj", '+_obj+');');
-    Storage[_type].set("obj", _obj);
+    console.log('executing: Vault.'+_type+'.set("obj", '+_obj+');');
+    Vault[_type].set("obj", _obj);
 });
 $("#list").click(function(e) {
     e.preventDefault();
     var _type = $("#type").val();
-    console.log('executing: Storage.'+_type+'.list();');
-    Storage[_type].list();
+    console.log('executing: Vault.'+_type+'.list();');
+    Vault[_type].list();
 });
 $("#clear").click(function(e) {
     e.preventDefault();
     var _type = $("#type").val();
-    console.log('executing: Storage.'+_type+'.clear();');
-    Storage[_type].clear(); 
+    console.log('executing: Vault.'+_type+'.clear();');
+    Vault[_type].clear(); 
 });
 </script>
 </body>
