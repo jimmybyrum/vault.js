@@ -1,10 +1,10 @@
-storage.js
+vault.js
 ===============
 
 wrapper for localStorage, sessionStorage and document.cookie that sets and gets true values
 
 #### Demo
-http://jimmybyrum.github.com/storage.js/
+http://jimmybyrum.github.com/vault.js/
 
 ##### Tested on:
 IE8+, Chrome, Firefox, Safari, Mobile Safari, Android 2.3+
