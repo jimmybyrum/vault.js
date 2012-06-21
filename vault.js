@@ -22,8 +22,12 @@ var Vault = (function() {
         if (!isNaN(_value)) {
             return parseFloat(_value);
         }
-        if (_value.indexOf && (_value.indexOf("{")===0 || _value.indexOf("[")===0) && window.JSON!==undefined) {
-            return JSON.parse(_value);
+        if (_value.indexOf && (_value.indexOf("{")===0 || _value.indexOf("[")===0)) {
+            if (window.JSON!==undefined) {
+                return JSON.parse(_value);
+            } else {
+                return eval("(" + _value + ")");
+            }
         }
         return _value;
     };
