@@ -7,7 +7,7 @@ wrapper for localStorage, sessionStorage and document.cookie that sets and gets 
 http://jimmybyrum.github.com/vault.js/
 
 ##### Tested on:
-IE8+, Chrome, Firefox, Safari, Mobile Safari, Android 2.3+
+IE7+, Chrome, Firefox, Safari, Mobile Safari, Android 2.3+
 
 #### Usage
 ##### set and get
