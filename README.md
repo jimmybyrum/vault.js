@@ -72,7 +72,7 @@ Vault.DB.open('testdb', '1.0', 'Test DB', 1024 * 1024);
 ```
 
 ##### create
-CREATE
+CREATE tables
 ```
 Vault.DB.create({
     users: ["id unique", "name", "age"]
@@ -162,7 +162,7 @@ DELETE FROM users
 ```
 
 ##### drop
-DROP a table
+DROP tables
 ```
 Vault.DB.drop(["users"]);
 // executes
