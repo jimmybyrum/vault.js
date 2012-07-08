@@ -77,7 +77,9 @@ CREATE tables
 Vault.DB.create({
     users: ["id unique", "name", "age"]
 });
-// executes
+```
+executes
+```
 CREATE TABLE IF NOT EXISTS users (id unique,name,age)
 ```
 
