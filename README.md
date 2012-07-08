@@ -8,6 +8,7 @@ http://jimmybyrum.github.com/vault.js/
 
 ##### Tested on:
 Webkit (Safari, Chrome), Firefox, Opera, IE7+, Mobile Safari, Android 2.3+
+
 Note that Web SQL is only supported in WebKit and Opera
 
 #### Usage
