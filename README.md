@@ -74,7 +74,7 @@ Vault.DB.open('testdb', '1.0', 'Test DB', 1024 * 1024);
 ##### createTable
 CREATE
 ```
-Vault.DB.createTable({
+Vault.DB.create({
     users: ["id unique", "name", "age"]
 });
 // executes
@@ -115,7 +115,7 @@ DELETE FROM users WHERE name="jimmy"
 ```
 
 ##### get
-SELECT
+SELECT data
 ```
 Vault.DB.get({
     users: ["name", "age"]
@@ -140,7 +140,7 @@ SELECT name,age FROM user
 ```
 
 ##### remove
-DELETE
+DELETE rows from a table
 ```
 Vault.DB.remove({
     users: [
@@ -156,15 +156,15 @@ DELETE FROM users WHERE age=33
 #### clear
 DELETE all rows
 ```
-Vault.DB.clear("users");
+Vault.DB.clear(["users"]);
 // executes
 DELETE FROM users
 ```
 
 ##### dropTable
-DROP
+DROP a table
 ```
-Vault.DB.dropTable("users");
+Vault.DB.drop(["users"]);
 // executes
 DROP TABLE users
 ```

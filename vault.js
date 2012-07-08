@@ -119,17 +119,21 @@ var Vault = (function() {
                 __db__ = window.openDatabase(_name, _version, _display_name, _size);
                 return __db__;
             },
-            createTable: function(_args) {
+            create: function(_tables) {
                 var _table;
-                for (_table in _args) {
-                    var _fields = _args[_table];
+                for (_table in _tables) {
+                    var _fields = _tables[_table];
                     var _sql = 'CREATE TABLE IF NOT EXISTS '+_table+' ('+_fields+')';
                     this.sql(_sql);
                 }
             },
-            dropTable: function(_name) {
-                var _sql = 'DROP TABLE '+_name;
-                this.sql(_sql);
+            drop: function(_tables) {
+                var i, il=_tables.length;
+                for (i=0; i<il; i++) {
+                    var _table = _tables[i];
+                    var _sql = 'DROP TABLE '+_table;
+                    this.sql(_sql);
+                }
             },
             get: function(_args, _success) {
                 var _sql = [];
@@ -182,9 +186,13 @@ var Vault = (function() {
                     }
                 }
             },
-            clear: function(_table) {
-                var _sql = 'DELETE FROM '+_table;
-                this.sql(_sql);
+            clear: function(_tables) {
+                var i, il=_tables.length;
+                for (i=0; i<il; i++) {
+                    var _table = _tables[i];
+                    var _sql = 'DELETE FROM '+_table;
+                    this.sql(_sql);
+                }
             },
             sql: function(_query, _success) {
                 if (__db__===undefined) {
