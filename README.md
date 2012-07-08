@@ -78,7 +78,6 @@ Vault.DB.create({
     users: ["id unique", "name", "age"]
 });
 ```
-executes
 ```
 CREATE TABLE IF NOT EXISTS users (id unique,name,age)
 ```
@@ -109,7 +108,8 @@ Vault.DB.set({
         }
     ]
 });
-// executes
+```
+```
 INSERT INTO users (name,age) VALUES ("andrea",29)
 INSERT INTO users (name,age) VALUES ("adriano",31)
 UPDATE users SET age=33 WHERE name="matt"
@@ -124,10 +124,12 @@ Vault.DB.get({
 }, function(_results) {
     // returns an array of result objects
 });
-// executes
+```
+```
 SELECT name,age FROM user
+```
+```
 // returns
-/*
 [
     {
         age: 31,
@@ -138,7 +140,6 @@ SELECT name,age FROM user
         name: "andrea"
     }
 ]
-*/
 ```
 
 ##### remove
@@ -150,7 +151,8 @@ Vault.DB.remove({
         { age: 33 }
     ]
 });
-// executes
+```
+```
 DELETE FROM users WHERE name="matt"
 DELETE FROM users WHERE age=33
 ```
@@ -159,7 +161,8 @@ DELETE FROM users WHERE age=33
 DELETE all rows
 ```
 Vault.DB.clear(["users"]);
-// executes
+```
+```
 DELETE FROM users
 ```
 
@@ -167,7 +170,8 @@ DELETE FROM users
 DROP tables
 ```
 Vault.DB.drop(["users"]);
-// executes
+```
+```
 DROP TABLE users
 ```
 
