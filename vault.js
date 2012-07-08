@@ -65,7 +65,7 @@ var Vault = (function() {
                 clear: _notSupported,
                 list: _notSupported,
                 isSupported: function() { return false; }
-            }
+            };
         }
         return {
             get: function(_key) {
@@ -92,74 +92,123 @@ var Vault = (function() {
                 }
             },
             isSupported: function() { return true; }
-        }
+        };
     };
-    var __db__ = undefined;
-    var _db = {
-        open: function(_name, _version, _display_name, _size) {
-            __db__ = openDatabase(_name, _version, _display_name, _size);
-            return __db__;
-        },
-        createTable: function(_name, _fields) {
-            var _sql = 'CREATE TABLE IF NOT EXISTS '+_name+' ('+_fields+')';
-            this.sql(_sql);
-        },
-        dropTable: function(_name) {
-            var _sql = 'DROP TABLE '+_name;
-            this.sql(_sql);
-        },
-        set: function(_args) {
-            var _table;
-            for (_table in _args) {
-                var _values = _args[_table];
-                var i, il=_values.length;
-                for (i=0; i<il; i++) {
-                    var _set = _values[i];
-                    var _pairs = _parseKeyValueList(_set);
-                    if (_set._where!==undefined) {
-                        var _where = _parseKeyValueList(_set._where);
-                        var j, jl=_pairs.fields.length, _updates=[];
-                        for (j=0; j<jl; j++) {
-                            _updates.push(_pairs.fields[j]+'='+_pairs.values[j]);
-                        }
-                        var _sql = 'UPDATE '+_table+' SET '+_updates.join(",")+' WHERE '+_where.fields+'='+_where.values;
-                    } else if (_set._delete!==undefined) {
-                        var _delete = _parseKeyValueList(_set._delete);
-                        var _sql = 'DELETE FROM '+_table+' WHERE '+_delete.fields+'='+_delete.values;
-                    } else {
-                        var _sql = 'INSERT INTO '+_table+' ('+_pairs.fields+') VALUES ('+_pairs.values+')';
-                    }
+    var __db__;
+    var _db = function() {
+        if (window.openDatabase===undefined) {
+            return {
+                info: _notSupported,
+                open: _notSupported,
+                createTable: _notSupported,
+                dropTable: _notSupported,
+                sql: _notSupported,
+                get: _notSupported,
+                set: _notSupported,
+                remove: _notSupported,
+                clear: _notSupported,
+                list: _notSupported,
+                isSupported: function() { return false; }
+            };
+        }
+        return {
+            info: function() {
+                return __db__;
+            },
+            open: function(_name, _version, _display_name, _size) {
+                __db__ = window.openDatabase(_name, _version, _display_name, _size);
+                return __db__;
+            },
+            createTable: function(_args) {
+                var _table;
+                for (_table in _args) {
+                    var _fields = _args[_table];
+                    var _sql = 'CREATE TABLE IF NOT EXISTS '+_table+' ('+_fields+')';
                     this.sql(_sql);
                 }
-            }
-        },
-        get: function(_args, _success) {
-            var _sql = [];
-            var _table;
-            for (_table in _args) {
-                var _fields = _args[_table];
-                _sql.push('SELECT '+_fields+' FROM '+_table);
-            }
-            _sql = _sql.join(",");
-            this.sql(_sql, _success);
-        },
-        clear: function(_table) {
-            var _sql = 'DELETE * FROM '+_table;
-            this.sql(_sql);
-        },
-        sql: function(_query, _success) {
-            if (__db__===undefined) {
-                console.warn("No DB open. Open with:\nVault.DB.open(_name, _version, _display_name, _size);");
-                return false;
-            }
-            _success = _success || function() {};
-            console.warn(_query);
-            __db__.transaction(function(_tx) {
-                return _tx.executeSql(_query, [], function(_tx, _results) {
-                    _success(_results.rows);
+            },
+            dropTable: function(_name) {
+                var _sql = 'DROP TABLE '+_name;
+                this.sql(_sql);
+            },
+            get: function(_args, _success) {
+                var _sql = [];
+                var _table;
+                for (_table in _args) {
+                    var _fields = _args[_table];
+                    _sql.push('SELECT '+_fields+' FROM '+_table);
+                }
+                _sql = _sql.join(",");
+                this.sql(_sql, _success);
+            },
+            set: function(_args) {
+                var _table;
+                for (_table in _args) {
+                    var _values = _args[_table];
+                    var i, il=_values.length;
+                    for (i=0; i<il; i++) {
+                        var _set = _values[i];
+                        var _pairs = _parseKeyValueList(_set);
+                        var _sql;
+                        if (_set._where!==undefined) {
+                            var _where = _parseKeyValueList(_set._where);
+                            var j, jl=_pairs.fields.length, _updates=[];
+                            for (j=0; j<jl; j++) {
+                                _updates.push(_pairs.fields[j]+'='+_pairs.values[j]);
+                            }
+                            _sql = 'UPDATE '+_table+' SET '+_updates.join(",")+' WHERE '+_where.fields+'='+_where.values;
+                            this.sql(_sql);
+                        } else if (_set._delete!==undefined) {
+                            var _rm = {};
+                            _rm[_table] = [_set._delete];
+                            this.remove(_rm);
+                        } else {
+                            _sql = 'INSERT INTO '+_table+' ('+_pairs.fields+') VALUES ('+_pairs.values+')';
+                            this.sql(_sql);
+                        }
+                    }
+                }
+            },
+            remove: function(_args) {
+                var _table;
+                for (_table in _args) {
+                    var _pairs = _args[_table];
+                    var i, il=_pairs.length;
+                    for (i=0; i<il; i++) {
+                        var _values = _pairs[i];
+                        var _delete = _parseKeyValueList(_values);
+                        _sql = 'DELETE FROM '+_table+' WHERE '+_delete.fields+'='+_delete.values;
+                        this.sql(_sql);
+                    }
+                }
+            },
+            clear: function(_table) {
+                var _sql = 'DELETE FROM '+_table;
+                this.sql(_sql);
+            },
+            sql: function(_query, _success) {
+                if (__db__===undefined) {
+                    console.warn("No DB open. Open with:\nVault.DB.open(_name, _version, _display_name, _size);\nQuery: "+_query);
+                    return false;
+                }
+                _success = _success || function() {};
+                console.log(_query);
+                __db__.transaction(function(_tx) {
+                    return _tx.executeSql(_query, [], function(_tx, _results) {
+                        if (_results.rows!==undefined) {
+                            var i, il=_results.rows.length;
+                            var _res = [];
+                            for (i=0; i<il; i++) {
+                                var _row = _results.rows.item(i);
+                                _res.push(_row);
+                            }
+                            _success(_res);
+                        }
+                    });
                 });
-            });
-        }
+            },
+            isSupported: function() { return true; }
+        };
     };
     var _cookie = {
         get: function(_cookie) {
@@ -181,7 +230,7 @@ var Vault = (function() {
                 _date.setDate(_date.getDate()+_days);
                 _expires = "; expires=" + _date.toUTCString();
             }
-            var _value = _prepare(_value) + _expires + (_path===undefined ? "" : "; path="+_path);
+            _value = _prepare(_value) + _expires + (_path===undefined ? "" : "; path="+_path);
             document.cookie = _key + "=" + _value;
         },
         remove: function(_key) {
@@ -213,8 +262,7 @@ var Vault = (function() {
     return {
         Local: _setup("localStorage"),
         Session: _setup("sessionStorage"),
-        DB: _db,
+        DB: _db(),
         Cookie: _cookie
     };
 }());
-var local_storage = Vault.Local;

@@ -1,15 +1,18 @@
 vault.js
 ===============
 
-wrapper for localStorage, sessionStorage and document.cookie that sets and gets true values
+wrapper for localStorage, sessionStorage, document.cookie that sets and gets true values and a abstracted interface to Web SQL
 
 #### Demo
 http://jimmybyrum.github.com/vault.js/
 
 ##### Tested on:
-IE7+, Chrome, Firefox, Safari, Mobile Safari, Android 2.3+
+Webkit (Safari, Chrome), Firefox, Opera, IE7+, Mobile Safari, Android 2.3+
+Note that Web SQL is only supported in WebKit and Opera
 
 #### Usage
+
+##### Local, Session, Cookie
 
 ##### set and get
 ```
@@ -58,6 +61,120 @@ lists all items in Vault in the console
 ```
 Vault.Session.list();
 Vault.Local.list();
+```
+
+##### Web SQL
+
+##### open
+open a db
+```
+Vault.DB.open('testdb', '1.0', 'Test DB', 1024 * 1024);
+```
+
+##### createTable
+CREATE
+```
+Vault.DB.createTable({
+    users: ["id unique", "name", "age"]
+});
+// executes
+CREATE TABLE IF NOT EXISTS users (id unique,name,age)
+```
+
+##### set
+INSERT, UPDATE, DELETE data
+```
+Vault.DB.set({
+    users: [
+        {
+            name: "andrea",
+            age: 29
+        },
+        {
+            name: "adriano",
+            age: 31
+        },
+        {
+            age: 33,
+            _where: {
+                name: "matt"
+            }
+        },
+        {
+            _delete: {
+                name: "jimmy"
+            }
+        }
+    ]
+});
+// executes
+INSERT INTO users (name,age) VALUES ("andrea",29)
+INSERT INTO users (name,age) VALUES ("adriano",31)
+UPDATE users SET age=33 WHERE name="matt"
+DELETE FROM users WHERE name="jimmy"
+```
+
+##### get
+SELECT
+```
+Vault.DB.get({
+    users: ["name", "age"]
+}, function(_results) {
+    // returns an array of result objects
+});
+// executes
+SELECT name,age FROM user
+// returns
+/*
+[
+    {
+        age: 31,
+        name: "adriano"
+    },
+    {
+        age: 30,
+        name: "andrea"
+    }
+]
+*/
+```
+
+##### remove
+DELETE
+```
+Vault.DB.remove({
+    users: [
+        { name: "matt" },
+        { age: 33 }
+    ]
+});
+// executes
+DELETE FROM users WHERE name="matt" vault.js:195
+DELETE FROM users WHERE age=33
+```
+
+#### clear
+DELETE all rows
+```
+Vault.DB.clear("users");
+// executes
+DELETE FROM users
+```
+
+##### dropTable
+DROP
+```
+Vault.DB.dropTable("users");
+// executes
+DROP TABLE users
+```
+
+##### sql
+runs any SQL statement
+```
+Vault.DB.sql("SELECT * FROM users WHERE age=31", function(_res) {
+    console.log(_res);
+});
 ```
 
 ##### isSupported
