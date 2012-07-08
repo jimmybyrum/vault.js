@@ -149,7 +149,7 @@ Vault.DB.remove({
     ]
 });
 // executes
-DELETE FROM users WHERE name="matt" vault.js:195
+DELETE FROM users WHERE name="matt"
 DELETE FROM users WHERE age=33
 ```
 
