@@ -132,7 +132,7 @@ SELECT name,age FROM user
         name: "adriano"
     },
     {
-        age: 30,
+        age: 29,
         name: "andrea"
     }
 ]
