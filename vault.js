@@ -36,19 +36,9 @@ var Vault = (function() {
     var _notSupported = function() {
         return undefined;
     };
-    var _trim = function(_str) {
-        if (!isNaN(_str)) {
-            return _str;
-        }
-        _str = _str.replace(/^\s\s*/, '');
-        var _ws = /\s/;
-        var _i = _str.length;
-        while (_ws.test(_str.charAt(--_i)));
-        return _str.slice(0, _i + 1);
-    };
     var _prepareSqlValue = function(_value) {
         if (isNaN(_value) && _value.indexOf('"')<0) {
-            _value = '"' + _trim(_value) + '"';
+            _value = '"' + _value + '"';
         }
         return _value;
     };
