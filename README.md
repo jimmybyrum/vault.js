@@ -189,6 +189,7 @@ returns a boolean to indicate if local and session storage are supported
 ```
 Vault.Session.isSupported();
 Vault.Local.isSupported();
+Vault.DB.isSupported();
 ```
 
 #### TODO

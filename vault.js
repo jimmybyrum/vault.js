@@ -72,6 +72,11 @@ var Vault = (function() {
                 var _value = _storage[_key];
                 return _parse(_value);
             },
+            getAndRemove: function(_key) {
+                var _value = this.get(_key);
+                this.remove(_key);
+                return _value;
+            },
             set: function(_key, _value) {
                 return _storage.setItem(_key, _prepare(_value));
             },
@@ -231,6 +236,11 @@ var Vault = (function() {
             }
             return undefined;
         },
+        getAndRemove: function(_key) {
+            var _value = this.get(_key);
+            this.remove(_key);
+            return _value;
+        },
         set: function(_key, _value, _days, _path) {
             var _expires = "";
             if (_days!==undefined) {
@@ -238,11 +248,11 @@ var Vault = (function() {
                 _date.setDate(_date.getDate()+_days);
                 _expires = "; expires=" + _date.toUTCString();
             }
-            _value = _prepare(_value) + _expires + (_path===undefined ? "" : "; path="+_path);
+            var _value = _prepare(_value) + _expires + (_path===undefined ? "" : "; path="+_path);
             document.cookie = _key + "=" + _value;
         },
         remove: function(_key) {
-            this.set(_key, "", -1);
+            this.set(_key, "", -1, "/");
         },
         clear: function() {
             var _cookies = document.cookie.split(";");
