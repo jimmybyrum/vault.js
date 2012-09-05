@@ -7,7 +7,7 @@ var Vault = (function() {
         // and return those
         if (_value===null || _value===undefined) {
             // localStorage["foo"] returns null
-            // in some browsers even if 
+            // in some browsers even if
             // foo isn't there at all.
             // since foo is really undefined,
             // we are returning accordingly
@@ -78,7 +78,11 @@ var Vault = (function() {
                 return _value;
             },
             set: function(_key, _value) {
-                return _storage.setItem(_key, _prepare(_value));
+                try {
+                    return _storage.setItem(_key, _prepare(_value));
+                } catch(e) {
+                    console.warn("Can't write to local stoarge. Perhaps you're using your browser in private mode? Here's the error: ", e);
+                }
             },
             remove: function(_key) {
                 return _storage.removeItem(_key);
