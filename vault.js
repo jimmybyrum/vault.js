@@ -266,7 +266,7 @@ var Vault = (function() {
             document.cookie = key + "=" + value;
         },
         remove: function(key) {
-            this.set(key, "", -1, "/");
+            document.cookie = key + '=; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
         },
         clear: function() {
             var cookies = document.cookie.split(";");
