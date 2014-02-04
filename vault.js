@@ -56,7 +56,17 @@ var Vault = (function() {
         };
     };
     var _setup = function(_type) {
-        var _storage = window[_type];
+        var _storage;
+        try {
+            _storage = window[_type];
+            try {
+                var _test = _storage["foo"];
+            } catch(e) {
+                _storage = undefined;
+            }
+        } catch(e) {
+            _storage = undefined;
+        }
         if (_storage===undefined) {
             return {
                 get: _notSupported,
@@ -190,7 +200,7 @@ var Vault = (function() {
                     for (i=0; i<il; i++) {
                         var _values = _pairs[i];
                         var _delete = _parseKeyValueList(_values);
-                        _sql = 'DELETE FROM '+_table+' WHERE '+_delete.fields+'='+_delete.values;
+                        var _sql = 'DELETE FROM '+_table+' WHERE '+_delete.fields+'='+_delete.values;
                         this.sql(_sql);
                     }
                 }
@@ -245,14 +255,14 @@ var Vault = (function() {
             this.remove(_key);
             return _value;
         },
-        set: function(_key, _value, _days, _path) {
+        set: function(_key, _value, _milliseconds, _path) {
             var _expires = "";
-            if (_days!==undefined) {
+            if (_milliseconds!==undefined) {
                 var _date = new Date();
-                _date.setDate(_date.getDate()+_days);
+                _date.setMilliseconds(_date.getMilliseconds()+_milliseconds);
                 _expires = "; expires=" + _date.toUTCString();
             }
-            var _value = _prepare(_value) + _expires + (_path===undefined ? "" : "; path="+_path);
+            _value = _prepare(_value) + _expires + (_path===undefined ? "" : "; path="+_path);
             document.cookie = _key + "=" + _value;
         },
         remove: function(_key) {
@@ -264,7 +274,7 @@ var Vault = (function() {
             for (c=0; c<cl; c++) {
                 var _pair = _cookies[c].split("=");
                 _pair[0] = _pair[0].replace(/^[ ]/, "");
-                this.set(_pair[0], "", -1);
+                this.remove(_pair[0]);
             }
         },
         list: function() {
