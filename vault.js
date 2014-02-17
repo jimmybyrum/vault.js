@@ -78,14 +78,27 @@ var Vault = (function() {
             };
         }
         return {
-            get: function(key) {
-                var value = storage[key];
-                return parse(value);
+            get: function(key, default_value) {
+                var value = parse(storage[key]);
+                if (value === undefined && default_value) {
+                    return default_value;
+                }
+                return value;
             },
             getAndRemove: function(key) {
                 var value = this.get(key);
                 this.remove(key);
                 return value;
+            },
+            getList: function() {
+                var list = [];
+                var i, il=storage.length;
+                for (i in storage) {
+                    var item = {};
+                    item[i] = parse(storage[i]);
+                    list.push(item);
+                }
+                return list;
             },
             set: function(key, value) {
                 try {
@@ -238,7 +251,7 @@ var Vault = (function() {
         };
     };
     var cookie = {
-        get: function(cookie) {
+        get: function(cookie, default_value) {
             var cookies = document.cookie.split(";");
             var c, cl=cookies.length;
             for (c=0; c<cl; c++) {
@@ -248,12 +261,25 @@ var Vault = (function() {
                     return parse(pair[1]);
                 }
             }
-            return undefined;
+            return default_value;
         },
         getAndRemove: function(key) {
             var value = this.get(key);
             this.remove(key);
             return value;
+        },
+        getList: function() {
+            var list = [];
+            var cookies = document.cookie.split(";");
+            var c, cl=cookies.length;
+            for (c=0; c<cl; c++) {
+                var pair = cookies[c].split("=");
+                pair[0] = pair[0].replace(/^[ ]/, "");
+                var item = {};
+                item[pair[0]] = parse(pair[1]);
+                list.push(item);
+            }
+            return list;
         },
         set: function(key, value, milliseconds, path) {
             var expires = "";
