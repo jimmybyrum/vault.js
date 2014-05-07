@@ -13,13 +13,17 @@ var Vault = (function() {
       // we are returning accordingly
       return undefined;
     }
-    if (value==="true") {
+    if (value===true || value==="true") {
       return true;
     }
-    if (value==="false") {
+    if (value===false || value==="false") {
       return false;
     }
-    if (!isNaN(value)) {
+    // the checks for true booleans above are because
+    // Chrome 34 (and perhaps other versions) return the following
+    // isNaN as false even if the value being checked it true or false.
+    // e.g. isNaN(true) and isNaN(false) both return false
+    if ( ! isNaN(value)) {
       return parseFloat(value);
     }
     if (value.indexOf && (value.indexOf("{")===0 || value.indexOf("[")===0) && window.JSON!==undefined) {
@@ -36,24 +40,52 @@ var Vault = (function() {
   var notSupported = function() {
     return undefined;
   };
-  var prepareSqlValue = function(value) {
-    if (isNaN(value) && value.indexOf('"')<0) {
-      value = '"' + value + '"';
-    }
-    return value;
-  };
-  var parseKeyValueList = function(pair) {
-    var key, fields=[], values=[];
-    for (key in pair) {
-      if (!key.match(/^\_/)) {
-        fields.push(key);
-        values.push(prepareSqlValue(pair[key]));
+  var getExpires = function(config) {
+    // looking for something like: "+5 days"
+    if (config.expires.match(/^(\+|\-)\d\s\w+/)) {
+      expires = new Date();
+      var operator = config.expires.substring(0, 1);
+      var parts = config.expires.substring(1).split(' ');
+      var num = parseInt(parts[0], 10);
+      var time = parts[1];
+      switch(time) {
+        case "millisecond":
+        case "milliseconds":
+          time = "Milliseconds";
+        break;
+        case "second":
+        case "seconds":
+          time = "Seconds";
+        break;
+        case "minute":
+        case "minutes":
+          time = "Minutes";
+        break;
+        case "hour":
+        case "hours":
+          time = "Hours";
+        break;
+        case "day":
+        case "days":
+          time = "Date";
+        break;
+        case "month":
+        case "months":
+          time = "Months";
+        break;
+        case "year":
+        case "years":
+          time = "FullYear";
+        break;
       }
+      if (operator === "-") {
+        expires["set"+time](expires["get"+time]() - num);
+      } else {
+        expires["set"+time](expires["get"+time]() + num);
+      }
+      return expires;
     }
-    return {
-      fields: fields,
-      values: values
-    };
+    return new Date(config.expires);
   };
   var setup = function(type) {
     var storage;
@@ -67,23 +99,29 @@ var Vault = (function() {
     } catch(e) {
       storage = undefined;
     }
-    if (storage===undefined) {
-      return {
-        get: notSupported,
-        set: notSupported,
-        remove: notSupported,
-        clear: notSupported,
-        list: notSupported,
-        isSupported: function() { return false; }
-      };
+    if ( ! storage) {
+      console.warn('Vault: ' + type + ' is not suppored. I will attempt to use Cookies instead.');
+      return Cookie;
     }
     return {
       get: function(key, default_value) {
-        var value = parse(storage[key]);
-        if (value === undefined && default_value) {
-          return default_value;
+        var obj;
+        if (storage[key]) {
+          obj = JSON.parse(storage[key]);
+          if (obj.expires) {
+            var now = new Date();
+            if (obj.expires <= now) {
+              var expired = new Date(obj.expires).toString();
+              console.log('Removing expired item: ' + key + '. It expired on: ' + expired);
+              this.remove(key);
+              return default_value;
+            }
+          }
+          if (obj.value) {
+            return parse(obj.value);
+          }
         }
-        return value;
+        return default_value;
       },
       getAndRemove: function(key) {
         var value = this.get(key);
@@ -95,16 +133,24 @@ var Vault = (function() {
         var i, il=storage.length;
         for (i in storage) {
           var item = {};
-          item[i] = parse(storage[i]);
+          item[i] = this.get(i);
           list.push(item);
         }
         return list;
       },
-      set: function(key, value, expires) {
+      set: function(key, value, config) {
         try {
-          return storage.setItem(key, prepare(value));
+          var obj = {
+            value: prepare(value)
+          };
+          if (config && config.expires) {
+            var expires = getExpires(config);
+            console.log(expires.toString());
+            obj.expires = expires && expires.valueOf();
+          }
+          return storage.setItem(key, JSON.stringify(obj));
         } catch(e) {
-          console.warn("Can't write to local stoarge. Perhaps you're using your browser in private mode? Here's the error: ", e);
+          console.warn("Vault: I can't write to localStoarge even though localStorage is supported. Perhaps you're using your browser in private mode? Here's the error: ", e);
         }
       },
       remove: function(key) {
@@ -113,144 +159,20 @@ var Vault = (function() {
       clear: function() {
         return storage.clear();
       },
-      list: function() {
+      list: function(raw) {
         var i, il=storage.length;
         if (il===0) {
           console.log("0 items in "+type);
           return undefined;
         }
         for (i in storage) {
-          console.log(i, "=", parse(storage[i]));
+          var value = raw ? parse(storage[i]) : this.get(i);
+          console.log(i, "=", value);
         }
-      },
-      isSupported: function() { return true; }
+      }
     };
   };
-  var __db__;
-  var db = function() {
-    if (window.openDatabase===undefined) {
-      return {
-        info: notSupported,
-        open: notSupported,
-        createTable: notSupported,
-        dropTable: notSupported,
-        sql: notSupported,
-        get: notSupported,
-        set: notSupported,
-        remove: notSupported,
-        clear: notSupported,
-        list: notSupported,
-        isSupported: function() { return false; }
-      };
-    }
-    return {
-      info: function() {
-        return __db__;
-      },
-      open: function(name, version, display_name, size) {
-        __db__ = window.openDatabase(name, version, display_name, size);
-        return __db__;
-      },
-      create: function(tables) {
-        var table;
-        for (table in tables) {
-          var fields = tables[table];
-          var sql = 'CREATE TABLE IF NOT EXISTS '+table+' ('+fields+')';
-          this.sql(sql);
-        }
-      },
-      drop: function(tables) {
-        var i, il=tables.length;
-        for (i=0; i<il; i++) {
-          var table = tables[i];
-          var sql = 'DROP TABLE '+table;
-          this.sql(sql);
-        }
-      },
-      get: function(args, success) {
-        var sql = [];
-        var table;
-        for (table in args) {
-          var fields = args[table];
-          sql.push('SELECT '+fields+' FROM '+table);
-        }
-        sql = sql.join(",");
-        this.sql(sql, success);
-      },
-      set: function(args) {
-        var table;
-        for (table in args) {
-          var values = args[table];
-          var i, il=values.length;
-          for (i=0; i<il; i++) {
-            var set = values[i];
-            var pairs = parseKeyValueList(set);
-            var sql;
-            if (set.where!==undefined) {
-              var where = parseKeyValueList(set.where);
-              var j, jl=pairs.fields.length, updates=[];
-              for (j=0; j<jl; j++) {
-                updates.push(pairs.fields[j]+'='+pairs.values[j]);
-              }
-              sql = 'UPDATE '+table+' SET '+updates.join(",")+' WHERE '+where.fields+'='+where.values;
-              this.sql(sql);
-            } else if (set.remove!==undefined) {
-              var rm = {};
-              rm[table] = [set.remove];
-              this.remove(rm);
-            } else {
-              sql = 'INSERT INTO '+table+' ('+pairs.fields+') VALUES ('+pairs.values+')';
-              this.sql(sql);
-            }
-          }
-        }
-      },
-      remove: function(args) {
-        var table;
-        for (table in args) {
-          var pairs = args[table];
-          var i, il=pairs.length;
-          for (i=0; i<il; i++) {
-            var values = pairs[i];
-            var remove = parseKeyValueList(values);
-            var sql = 'DELETE FROM '+table+' WHERE '+remove.fields+'='+remove.values;
-            this.sql(sql);
-          }
-        }
-      },
-      clear: function(tables) {
-        var i, il=tables.length;
-        for (i=0; i<il; i++) {
-          var table = tables[i];
-          var sql = 'DELETE FROM '+table;
-          this.sql(sql);
-        }
-      },
-      sql: function(query, success) {
-        if (__db__===undefined) {
-          console.warn("No DB open. Open with:\nVault.DB.open(name, version, display_name, size);\nQuery: "+query);
-          return false;
-        }
-        success = success || function() {};
-        console.log(query);
-        __db__.transaction(function(tx) {
-          return tx.executeSql(query, [], function(tx, results) {
-            if (results.rows!==undefined) {
-              var i, il=results.rows.length;
-              var res = [];
-              for (i=0; i<il; i++) {
-                var row = results.rows.item(i);
-                res.push(row);
-              }
-              success(res);
-            }
-          });
-        });
-      },
-      isSupported: function() { return true; }
-    };
-  };
-  var cookie = {
+  var Cookie = {
     get: function(cookie, default_value) {
       var cookies = document.cookie.split(";");
       var c, cl=cookies.length;
@@ -281,14 +203,18 @@ var Vault = (function() {
       }
       return list;
     },
-    set: function(key, value, milliseconds, path) {
+    set: function(key, value, config) {
       var expires = "";
-      if (milliseconds!==undefined) {
-        var date = new Date();
-        date.setMilliseconds(date.getMilliseconds()+milliseconds);
-        expires = "; expires=" + date.toUTCString();
+      if (config && config.expires) {
+        var exp = getExpires(config);
+        expires = "; expires=" + exp.toUTCString();
       }
-      value = prepare(value) + expires + (path===undefined ? "" : "; path="+path);
+      var path = "";
+      if (config && config.path) {
+        path = "; path=" + config.path;
+      }
+      value = prepare(value) + expires + path;
+      console.log("Setting cookie", key, value);
       document.cookie = key + "=" + value;
     },
     remove: function(key) {
@@ -306,8 +232,8 @@ var Vault = (function() {
     list: function() {
       var cookies = document.cookie.split(";");
       var c, cl=cookies.length;
-      if (cl===0) {
-        console.log("No cookies set");
+      if (document.cookie==="" || cl===0) {
+        console.log("0 cookies");
         return undefined;
       }
       for (c=0; c<cl; c++) {
@@ -317,10 +243,50 @@ var Vault = (function() {
       }
     }
   };
+  var Local = setup("localStorage");
+  var Session = setup("sessionStorage");
   return {
-    Local: setup("localStorage"),
-    Session: setup("sessionStorage"),
-    DB: db(),
-    Cookie: cookie
+    Local: Local,
+    Session: Session,
+    Cookie: Cookie,
+    set: function(key, value, config) {
+      if (config && config.expires) {
+        return Local.set(key, value, config);
+      } else {
+        return Session.set(key, value, config);
+      }
+      return Cookie.set(key, value, config);
+    },
+    get: function(key) {
+      var sess = Session.get(key);
+      if (sess !== undefined) {
+        return sess;
+      } else {
+        var local = Local.get(key);
+        if (local !== undefined) {
+          return local;
+        } else {
+          return Cookie.get(key);
+        }
+      }
+    },
+    list: function(raw) {
+      console.log('--== Local ==--');
+      Local.list(raw);
+      console.log('--== Session ==--');
+      Session.list(raw);
+      console.log('--== Cookie ==--');
+      Cookie.list(raw);
+    },
+    remove: function(key) {
+      Local.remove(key);
+      Session.remove(key);
+      Cookie.remove(key);
+    },
+    clear: function() {
+      Local.clear();
+      Session.clear();
+      Cookie.clear();
+    }
   };
 }());

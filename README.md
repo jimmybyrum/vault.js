@@ -3,42 +3,92 @@ vault.js
 
 wrapper for localStorage, sessionStorage, document.cookie that sets and gets true values and an abstracted interface to Web SQL
 
-#### Demo
+### Demo
 http://jimmybyrum.github.com/vault.js/
 
-##### Tested on:
+#### Tested on:
 Webkit (Safari, Chrome), Firefox, Opera, IE7+, Mobile Safari, Android 2.3+
 
 Note that Web SQL is only supported in WebKit and Opera
 
-#### Usage
+### Usage
 
-##### Local, Session, Cookie
+#### Local, Session, Cookie
 
-##### set and get
+##### set
 ```
+Vault.set(String key, Mixed value, Object optional_config);
+```
+or, if you want to specify which storage to use:
+```
+Vault.Local.set(String key, Mixed value, Object optional_config);
+Vault.Session.set(String key, Mixed value, Object optional_config);
+Vault.Cookie.set(String key, Mixed value, Object optional_config);
+```
+
+##### config (all optional)
+```
+{
+  expires: '2014-09-25 8:24:32 pm', // or anything that can be parsed by new Date(...)
+  expires: '+3 days', // works for all time increments from milliseconds to years.
+  path: '/' // for cookies. may implement for Storage in the future.
+}
+```
+
+##### How Vault.set(...) works
+```
+if config.expires exists and localStorage is supported, then
+  use localStorage
+else if sessionStorage is supported, then
+  use sessionStorage
+else
+  use cookies
+```
+
+#### examples
+
+```
+Vault.set("year", 1999); // saves in sessionStorage
+
+Vault.set("year", 1999, { expires: '1999-12-31 11:59:59 pm' }); // saves in localStorage until 11:59:59 on December 31, 1999
+
 Vault.Session.set("foo", "bar");
-Vault.Session.get("foo");
-// returns "bar"
-
+Vault.Session.set("foo", "bar", {
+  expires: "+6 months"
+});
 Vault.Local.set("my_array", [1,2,3,4]);
-Vault.Local.get("my_array");
-// [1,2,3,4]
-
-Vault.Session.set("my_object", {
+Vault.Cookie.set("my_object", {
   foo: "bar",
   an_array: [1,2,3],
   year: 2012
 });
-Vault.Session.get("my_object");
+Vault.Local.set("age", 33);
+```
+
+##### Vault.get(...)
+Will check storage in this order: Session, Local, Cookie
+
+To specify which storage to get from, use:
+```
+Vault.Local.get(String key);
+Vault.Session.get(String key);
+Vault.Cookie.get(String key);
+```
+
+#### examples
+```
+Vault.get("foo"); returns from Session, else Local, else Cookie, else undefined
+
+Vault.Session.get("foo");
+// returns "bar"
+Vault.Local.get("my_array");
+// [1,2,3,4]
+Vault.Cookie.get("my_object");
 // {
 //   foo: "bar",
 //   an_array: [1,2,3],
 //   year: 2012
 // }
-
-
-Vault.Local.set("age", 33);
 Vault.Local.get("age");
 // returns the number 33
 ```
@@ -46,150 +96,28 @@ Vault.Local.get("age");
 ##### remove
 removes an item
 ```
+Vault.remove("my_object"); // removes from all storage types
 Vault.Session.remove("my_object");
 Vault.Local.remove("my_array");
+Vault.Cookie.remove("my_array");
 ```
 
 ##### clear
 clears all items
 ```
+Vault.clear(); // clears all storage types
 Vault.Session.clear();
 Vault.Local.clear();
+Vault.Cookie.clear();
 ```
 
 ##### list
 lists all items in Vault in the console
 ```
+Vault.list(); // lists all storage types
 Vault.Session.list();
 Vault.Local.list();
-```
-
-##### Web SQL
-
-##### open
-open a db
-```
-Vault.DB.open('testdb', '1.0', 'Test DB', 1024 * 1024);
-```
-
-##### create
-CREATE tables
-```
-Vault.DB.create({
-    users: ["id unique", "name", "age"]
-});
-```
-```
-CREATE TABLE IF NOT EXISTS users (id unique,name,age)
-```
-
-##### set
-INSERT, UPDATE, DELETE data
-```
-Vault.DB.set({
-    users: [
-        {
-            name: "andrea",
-            age: 29
-        },
-        {
-            name: "adriano",
-            age: 31
-        },
-        {
-            age: 33,
-            _where: {
-                name: "matt"
-            }
-        },
-        {
-            _delete: {
-                name: "jimmy"
-            }
-        }
-    ]
-});
-```
-```
-INSERT INTO users (name,age) VALUES ("andrea",29)
-INSERT INTO users (name,age) VALUES ("adriano",31)
-UPDATE users SET age=33 WHERE name="matt"
-DELETE FROM users WHERE name="jimmy"
-```
-
-##### get
-SELECT data
-```
-Vault.DB.get({
-    users: ["name", "age"]
-}, function(_results) {
-    // returns an array of result objects
-});
-```
-```
-SELECT name,age FROM user
-```
-```
-// returns
-[
-    {
-        age: 31,
-        name: "adriano"
-    },
-    {
-        age: 29,
-        name: "andrea"
-    }
-]
-```
-
-##### remove
-DELETE rows from a table
-```
-Vault.DB.remove({
-    users: [
-        { name: "matt" },
-        { age: 33 }
-    ]
-});
-```
-```
-DELETE FROM users WHERE name="matt"
-DELETE FROM users WHERE age=33
-```
-
-#### clear
-DELETE all rows
-```
-Vault.DB.clear(["users"]);
-```
-```
-DELETE FROM users
-```
-
-##### drop
-DROP tables
-```
-Vault.DB.drop(["users"]);
-```
-```
-DROP TABLE users
-```
-
-##### sql
-runs any SQL statement
-```
-Vault.DB.sql("SELECT * FROM users WHERE age=31", function(_res) {
-    console.log(_res);
-});
-```
-
-##### isSupported
-returns a boolean to indicate if local and session storage are supported
-```
-Vault.Session.isSupported();
-Vault.Local.isSupported();
-Vault.DB.isSupported();
+Vault.Cookie.list();
 ```
 
 #### TODO

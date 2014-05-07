@@ -52,7 +52,7 @@ $("#set").submit(function(e) {
     var _type = $("#type").val();
     var _name = $("#name").val();
     console.log('executing: Vault.'+_type+'.set("name", '+_name+');');
-    Vault[_type].set("name", _name);
+    Vault[_type].set("name", _name, '2014-05-07');
     var _number = $("#number").val();
     console.log('executing: Vault.'+_type+'.set("age", '+_number+');');
     Vault[_type].set("age", _number);
@@ -73,7 +73,7 @@ $("#clear").click(function(e) {
     e.preventDefault();
     var _type = $("#type").val();
     console.log('executing: Vault.'+_type+'.clear();');
-    Vault[_type].clear(); 
+    Vault[_type].clear();
 });
 </script>
 </body>
