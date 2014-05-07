@@ -1,10 +1,8 @@
 vault.js
 ===============
 
-wrapper for localStorage, sessionStorage, document.cookie that sets and gets true values and an abstracted interface to Web SQL
-
-### Demo
-http://jimmybyrum.github.io/vault.js/
+Wrapper for localStorage, sessionStorage, document.cookie that sets and gets true values.
+Adds some cookie functionality to localStorage. For now, just expires. More coming soon.
 
 #### Tested on:
 Webkit (Safari, Chrome), Firefox, Opera, IE7+, Mobile Safari, Android 2.3+
