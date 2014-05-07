@@ -15,27 +15,12 @@ Note that Web SQL is only supported in WebKit and Opera
 
 #### Local, Session, Cookie
 
-##### set
+##### Vault.set(String key, Mixed value, Object optional_config)
 ```
 Vault.set(String key, Mixed value, Object optional_config);
 ```
-or, if you want to specify which storage to use:
-```
-Vault.Local.set(String key, Mixed value, Object optional_config);
-Vault.Session.set(String key, Mixed value, Object optional_config);
-Vault.Cookie.set(String key, Mixed value, Object optional_config);
-```
 
-##### config (all optional)
-```
-{
-  expires: '2014-09-25 8:24:32 pm', // or anything that can be parsed by new Date(...)
-  expires: '+3 days', // works for all time increments from milliseconds to years.
-  path: '/' // for cookies. may implement for Storage in the future.
-}
-```
-
-##### How Vault.set(...) works
+##### rules for which storage to use
 ```
 if config.expires exists and localStorage is supported, then
   use localStorage
@@ -43,6 +28,26 @@ else if sessionStorage is supported, then
   use sessionStorage
 else
   use cookies
+```
+or, if you want to specify which storage to use:
+```
+Vault.Cookie.set(...);
+Vault.Session.set(...);
+Vault.Local.set(...);
+```
+
+##### optional_config
+```
+{
+  // Cookie options. May implement for Storage in the future.
+  path: "/",
+  domain: ".jimmybyrum.com",
+  secure: true,
+
+  // Cookie and Local options
+  expires: "2014-09-25 8:24:32 pm", // or anything that can be parsed by new Date(...)
+  expires: "+3 days", // works for all time increments from milliseconds to years.
+}
 ```
 
 #### examples
@@ -65,14 +70,14 @@ Vault.Cookie.set("my_object", {
 Vault.Local.set("age", 33);
 ```
 
-##### Vault.get(...)
+##### Vault.get(String key)
 Will check storage in this order: Session, Local, Cookie
 
 To specify which storage to get from, use:
 ```
+Vault.Cookie.get(String key);
 Vault.Local.get(String key);
 Vault.Session.get(String key);
-Vault.Cookie.get(String key);
 ```
 
 #### examples
