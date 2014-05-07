@@ -31,8 +31,9 @@ var Vault = (function() {
     }
     return value;
   };
-  var prepare = function(value) {
-    if (typeof value==="object" && window.JSON!==undefined) {
+  var prepare = function(value, encode) {
+    if (encode === undefined) { encode = true; }
+    if (encode && typeof value==="object" && window.JSON!==undefined) {
       return JSON.stringify(value);
     }
     return value;
@@ -141,7 +142,7 @@ var Vault = (function() {
       set: function(key, value, config) {
         try {
           var obj = {
-            value: prepare(value)
+            value: prepare(value, false)
           };
           if (config && config.expires) {
             var expires = getExpires(config);
@@ -192,14 +193,16 @@ var Vault = (function() {
     },
     getList: function() {
       var list = [];
-      var cookies = document.cookie.split(";");
-      var c, cl=cookies.length;
-      for (c=0; c<cl; c++) {
-        var pair = cookies[c].split("=");
-        pair[0] = pair[0].replace(/^[ ]/, "");
-        var item = {};
-        item[pair[0]] = parse(pair[1]);
-        list.push(item);
+      if (document.cookie !== "") {
+        var cookies = document.cookie.split(";");
+        var c, cl=cookies.length;
+        for (c=0; c<cl; c++) {
+          var pair = cookies[c].split("=");
+          pair[0] = pair[0].replace(/^[ ]/, "");
+          var item = {};
+          item[pair[0]] = parse(pair[1]);
+          list.push(item);
+        }
       }
       return list;
     },
@@ -209,12 +212,21 @@ var Vault = (function() {
         var exp = getExpires(config);
         expires = "; expires=" + exp.toUTCString();
       }
+      var max_age = "";
+      if (config && config.max_age) {
+        max_age = "; max-age=" + config.max_age;
+      }
+      var domain = "";
+      if (config && config.domain) {
+        domain = "; domain=" + config.domain;
+      }
       var path = "";
       if (config && config.path) {
         path = "; path=" + config.path;
       }
-      value = prepare(value) + expires + path;
-      console.log("Setting cookie", key, value);
+      var secure = (config && config.secure) ? "; secure" : "";
+      value = prepare(value) + path + domain + max_age + expires + secure;
+      console.log("Vault: set cookie \"" + key + "\": " + value);
       document.cookie = key + "=" + value;
     },
     remove: function(key) {
@@ -277,6 +289,13 @@ var Vault = (function() {
       Session.list(raw);
       console.log('--== Cookie ==--');
       Cookie.list(raw);
+    },
+    getLists: function() {
+      return {
+        Local: Local.getList(),
+        Session: Session.getList(),
+        Cookie: Cookie.getList()
+      };
     },
     remove: function(key) {
       Local.remove(key);
