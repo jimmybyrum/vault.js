@@ -4,11 +4,6 @@ vault.js
 Wrapper for localStorage, sessionStorage, document.cookie that sets and gets true values.
 Adds some cookie functionality to localStorage. For now, just expires. More coming soon.
 
-#### Tested on:
-Webkit (Safari, Chrome), Firefox, Opera, IE7+, Mobile Safari, Android 2.3+
-
-Note that Web SQL is only supported in WebKit and Opera
-
 ### Usage
 
 #### Local, Session, Cookie
