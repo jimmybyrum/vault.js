@@ -108,18 +108,22 @@ var Vault = (function() {
       get: function(key, default_value) {
         var obj;
         if (storage[key]) {
-          obj = JSON.parse(storage[key]);
-          if (obj.expires) {
-            var now = new Date();
-            if (obj.expires <= now) {
-              var expired = new Date(obj.expires).toString();
-              console.log('Removing expired item: ' + key + '. It expired on: ' + expired);
-              this.remove(key);
-              return default_value;
+          try {
+            obj = JSON.parse(storage[key]);
+            if (obj.expires) {
+              var now = new Date();
+              if (obj.expires <= now) {
+                var expired = new Date(obj.expires).toString();
+                console.log('Removing expired item: ' + key + '. It expired on: ' + expired);
+                this.remove(key);
+                return default_value;
+              }
             }
-          }
-          if (obj.value) {
+          } catch(e) {}
+          if (obj && obj.value) {
             return parse(obj.value);
+          } else {
+            return parse(storage[key]);
           }
         }
         return default_value;
