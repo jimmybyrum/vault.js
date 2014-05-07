@@ -72,7 +72,7 @@ var Vault = (function() {
         break;
         case "month":
         case "months":
-          time = "Months";
+          time = "Month";
         break;
         case "year":
         case "years":
