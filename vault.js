@@ -5,13 +5,16 @@ var Vault = (function() {
     // so let's convert booleans and numbers
     // to be true booleans and numbers
     // and return those
-    if (value===null || value===undefined) {
+    if (value===null || value===undefined || value==='undefined') {
       // localStorage["foo"] returns null
       // in some browsers even if
       // foo isn't there at all.
       // since foo is really undefined,
       // we are returning accordingly
       return undefined;
+    }
+    if (value==='null') {
+      return null;
     }
     if (value===true || value==="true") {
       return true;
@@ -23,7 +26,7 @@ var Vault = (function() {
     // Chrome 34 (and perhaps other versions) return the following
     // isNaN as false even if the value being checked it true or false.
     // e.g. isNaN(true) and isNaN(false) both return false
-    if ( ! isNaN(value)) {
+    if (value!=='' && ! isNaN(value)) {
       return parseFloat(value);
     }
     if (value.indexOf && (value.indexOf("{")===0 || value.indexOf("[")===0) && window.JSON!==undefined) {
@@ -120,7 +123,7 @@ var Vault = (function() {
               }
             }
           } catch(e) {}
-          if (obj && obj.value) {
+          if (obj && obj.value !== undefined) {
             return parse(obj.value);
           } else {
             return parse(storage[key]);
