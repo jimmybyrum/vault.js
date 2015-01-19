@@ -32,14 +32,17 @@ Vault.Local.set(...);
 ##### optional_config
 ```
 {
-  // Cookie options. May implement for Storage in the future.
-  path: "/",
+  // Cookie options.
   domain: ".jimmybyrum.com",
   secure: true,
 
   // Cookie and Local options
+  path: "/",
   expires: "2014-09-25 8:24:32 pm", // or anything that can be parsed by new Date(...)
   expires: "+3 days", // works for all time increments from milliseconds to years.
+
+  // domain and local/session storage
+  local/session is natively tied to the domain. Subdomain keys can only be set from that subdomain.
 }
 ```
 
@@ -52,7 +55,8 @@ Vault.set("year", 1999, { expires: '1999-12-31 11:59:59 pm' }); // saves in loca
 
 Vault.Session.set("foo", "bar");
 Vault.Session.set("foo", "bar", {
-  expires: "+6 months"
+  expires: "+6 months",
+  path: "/examples"
 });
 Vault.Local.set("my_array", [1,2,3,4]);
 Vault.Cookie.set("my_object", {

@@ -1,5 +1,5 @@
 {
-  "name": "browser-vault",
+  "name": "vault.js",
   "version": "0.0.5",
   "description": "Normalizer for local/sessionStorage & cookies.",
   "kewords": "localStorage sessionStorage cookies local session storage browser",
