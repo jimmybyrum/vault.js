@@ -123,6 +123,7 @@ Vault.Cookie.list();
 ```
 
 #### TODO
+- add server-side storage for node- save data to a json file
 - handle storage limit errors
 - add support to request more storage
 - handle storage events
