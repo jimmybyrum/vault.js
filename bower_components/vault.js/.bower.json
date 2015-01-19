@@ -1,0 +1,34 @@
+{
+  "name": "vault.js",
+  "version": "0.1.0",
+  "homepage": "http://jimmybyrum.github.io/vault.js/",
+  "authors": [
+    "James Byrum <me@jimmybyrum.com>"
+  ],
+  "description": "Normalizer for local/sessionStorage & cookies.",
+  "main": "dist/vault.min.js",
+  "keywords": [
+    "localStorage",
+    "sessionStorage",
+    "cookies",
+    "browser"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "_release": "0.1.0",
+  "_resolution": {
+    "type": "version",
+    "tag": "0.1.0",
+    "commit": "3aeea36844253fbcf32dbf357e94c06f894f7655"
+  },
+  "_source": "git://github.com/jimmybyrum/vault.js.git",
+  "_target": "~0.1.0",
+  "_originalSource": "vault.js",
+  "_direct": true
+}

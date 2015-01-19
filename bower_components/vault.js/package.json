@@ -1,0 +1,29 @@
+{
+  "name": "vault.js",
+  "version": "0.1.0",
+  "description": "Normalizer for local/sessionStorage & cookies.",
+  "main": "vault.js",
+  "author": "Jimmy Byrum (https://github.com/jimmybyrum)",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:jimmybyrum/vault.js.git"
+  },
+  "bugs": {
+    "url": "https://github.com/jimmybyrum/vault.js/issues"
+  },
+  "homepage": "http://jimmybyrum.github.io/vault.js/",
+  "scripts": {
+    "test": "gulp eslint"
+  },
+  "keywords": [
+    "localStorage",
+    "sessionStorage",
+    "cookies",
+    "browser"
+  ],
+  "dependencies": {
+    "gulp": "^3.8.10",
+    "gulp-eslint": "^0.2.0"
+  }
+}
