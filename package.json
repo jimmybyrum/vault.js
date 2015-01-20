@@ -2,7 +2,6 @@
   "name": "vault.js",
   "version": "0.1.0",
   "description": "Normalizer for local/sessionStorage & cookies.",
-  "kewords": "localStorage sessionStorage cookies local session storage browser",
   "main": "vault.js",
   "author": "Jimmy Byrum (https://github.com/jimmybyrum)",
   "license": "MIT",
