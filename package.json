@@ -1,8 +1,8 @@
 {
   "name": "vault.js",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Normalizer for local/sessionStorage & cookies.",
-  "main": "vault.js",
+  "main": "lib/vault.js",
   "author": "Jimmy Byrum (https://github.com/jimmybyrum)",
   "license": "MIT",
   "repository": {
