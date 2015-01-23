@@ -4,9 +4,16 @@ vault.js
 Wrapper for localStorage, sessionStorage, document.cookie that sets and gets true values.
 Adds some cookie functionality to localStorage.
 
-### What's new
+### What's new!
  * [0.1.4] Support for use server-side added- writes data to .vault.json at the root level
  * [0.1.0] localStorage and sessionStorage support the path param
+
+### What's next?
+- add redis as a storage option
+- ~~add server-side storage for node- save data to a json file~~
+- handle storage limit errors
+- add support to request more storage
+- handle storage events
 
 ### Usage
 
@@ -130,9 +137,3 @@ Vault.Session.list();
 Vault.Local.list();
 Vault.Cookie.list();
 ```
-
-#### TODO
-- ~~add server-side storage for node- save data to a json file~~
-- handle storage limit errors
-- add support to request more storage
-- handle storage events
