@@ -14,16 +14,6 @@
     "no-loop-func": 0
   },
   "globals": {
-    "cl": true,
-    "angular": true,
-    "_": true,
-    "async": true,
-    "Big": true,
-    "numeral": true,
-    "Chart": true,
-    "Vault": true,
-    "moment": true,
-    "login": true
   },
   "env":{
     "browser": true,
