@@ -1,8 +1,9 @@
 vault.js
 ===============
 
-Wrapper for localStorage, sessionStorage, document.cookie that sets and gets true values.
-Adds some cookie functionality to localStorage.
+Vault is an API to store Key-Value pairs as true data types. It can utilize localStorage, sessionStorage, and cookies in the Browser. In node, it uses a file at the root of the project (redis support coming soon).
+
+It will handle toString and fromString conversion, so store those JSON objects, arrays, booleans, and numbers wherever you like and you'll get true data types back.
 
 ### What's new!
  * [0.1.4] Support for use server-side added- writes data to .vault.json at the root level
