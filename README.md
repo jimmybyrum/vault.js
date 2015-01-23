@@ -2,7 +2,11 @@ vault.js
 ===============
 
 Wrapper for localStorage, sessionStorage, document.cookie that sets and gets true values.
-Adds some cookie functionality to localStorage. For now, just expires. More coming soon.
+Adds some cookie functionality to localStorage.
+
+### What's new
+ * [0.1.4] Support for use server-side added- writes data to .vault.json at the root level
+ * [0.1.0] localStorage and sessionStorage support the path param
 
 ### Usage
 
