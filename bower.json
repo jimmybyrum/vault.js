@@ -1,6 +1,6 @@
 {
   "name": "vault.js",
-  "version": "0.1.0",
+  "version": "0.1.4",
   "homepage": "http://jimmybyrum.github.io/vault.js/",
   "authors": [
     "James Byrum <me@jimmybyrum.com>"
@@ -10,8 +10,12 @@
   "keywords": [
     "localStorage",
     "sessionStorage",
+    "cookie",
     "cookies",
-    "browser"
+    "local",
+    "session",
+    "file",
+    "storage"
   ],
   "license": "MIT",
   "ignore": [
