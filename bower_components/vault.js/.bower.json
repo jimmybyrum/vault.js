@@ -1,6 +1,6 @@
 {
   "name": "vault.js",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "homepage": "http://jimmybyrum.github.io/vault.js/",
   "authors": [
     "James Byrum <me@jimmybyrum.com>"
@@ -10,8 +10,12 @@
   "keywords": [
     "localStorage",
     "sessionStorage",
+    "cookie",
     "cookies",
-    "browser"
+    "local",
+    "session",
+    "file",
+    "storage"
   ],
   "license": "MIT",
   "ignore": [
@@ -21,11 +25,11 @@
     "test",
     "tests"
   ],
-  "_release": "0.1.3",
+  "_release": "0.1.4",
   "_resolution": {
     "type": "version",
-    "tag": "0.1.3",
-    "commit": "0c19ee184f02f1e8cfc528014013de3f195cf277"
+    "tag": "0.1.4",
+    "commit": "ce10915973a4cdc44014bc31ce5709091eeb271a"
   },
   "_source": "git://github.com/jimmybyrum/vault.js.git",
   "_target": "~0.1.0",

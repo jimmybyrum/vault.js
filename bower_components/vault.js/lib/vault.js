@@ -1,6 +1,12 @@
 'use strict';
+var mode = typeof window === 'undefined' ? 'server' : 'browser';
 // wrapper for localStorage, sessionStorage and document.cookie
 var Vault = (function() {
+  var Local, Session, Server;
+  var conf = {
+    vaultFile: '/.vault.json',
+    vaultData: '__vaultData'
+  };
   var parse = function(value) {
     // everything in local storage is a string
     // so let's convert booleans and numbers
@@ -41,7 +47,6 @@ var Vault = (function() {
     }
     return value;
   };
-  var vaultData = '__vaultData';
   var getExpires = function(config) {
     // looking for something like: "+5 days"
     if (config.expires.match(/^(\+|\-)\d+\s\w+/)) {
@@ -89,6 +94,95 @@ var Vault = (function() {
     }
     return new Date(config.expires);
   };
+  var getData = function(storage) {
+    var vaultDataDictionary = storage.getItem(conf.vaultData);
+    if (!vaultDataDictionary) {
+      vaultDataDictionary = {};
+    }
+    if (typeof vaultDataDictionary === 'string') {
+      vaultDataDictionary = JSON.parse(vaultDataDictionary);
+    }
+    return vaultDataDictionary;
+  };
+  var setKeyMeta = function(storage, key, config) {
+    if (key === conf.vaultData) {
+      return false;
+    }
+    config = config || {};
+    var vaultDataDictionary = getData(storage);
+    if (!vaultDataDictionary[key]) {
+      vaultDataDictionary[key] = {};
+    }
+    if (config.expires) {
+      var expires = getExpires(config);
+      vaultDataDictionary[key].expires = expires && expires.valueOf();
+    } else {
+      delete vaultDataDictionary[key].expires;
+    }
+    if (config.path) {
+      vaultDataDictionary[key].path = config.path;
+    } else {
+      delete vaultDataDictionary[key].path;
+    }
+    storage.setItem(conf.vaultData, prepare(vaultDataDictionary));
+  };
+  var getKeyMeta = function(storage, key) {
+    if (key === conf.vaultData) {
+      return false;
+    }
+    try {
+      var vaultDataDictionary = getData(storage);
+      return vaultDataDictionary[key];
+    } catch(e) {
+      return undefined;
+    }
+  };
+  var clearKeyMeta = function(storage, key) {
+    if (key === conf.vaultData) {
+      return false;
+    }
+    try {
+      var vaultDataDictionary = getData(storage);
+      delete vaultDataDictionary[key];
+      storage.setItem(conf.vaultData, prepare(vaultDataDictionary));
+    } catch(e) {}
+  };
+  var checkKeyMeta = function(storage, key) {
+    if (key === conf.vaultData) {
+      return false;
+    }
+    try {
+      var obj = parse(storage[key]);
+
+      var keyMeta = getKeyMeta(storage, key);
+      // console.warn('keyMeta:', keyMeta);
+      if (keyMeta) {
+        if (mode === 'browser' && keyMeta.path) {
+          var storagePath = window.location.pathname || window.location.path;
+          if (!storagePath.match(keyMeta.path)) {
+            // console.warn('Data found for ' + key + ' but paths do not match. The browser is at ' + path + ' and the key is for ' + keyMeta.path);
+            return true;
+          }
+        }
+
+        // TODO: deprecate obj.expires
+        if (!keyMeta.expires && obj && obj.expires) {
+          keyMeta.expires = obj.expires;
+        }
+
+        if (keyMeta.expires && keyMeta.expires <= new Date()) {
+          var expired = new Date(keyMeta.expires).toString();
+          console.log('Removing expired item: ' + key + '. It expired on: ' + expired);
+          clearKeyMeta(storage, key);
+          storage.removeItem(key);
+          return true;
+        }
+      }
+    } catch(e) {
+      console.warn('Vault Error:', e);
+    }
+    return false;
+  };
   var setup = function(type) {
     var storage;
     try {
@@ -108,80 +202,13 @@ var Vault = (function() {
       return Cookie;
     }
     return {
-      getData: function() {
-        var vaultDataDictionary = storage.getItem(vaultData);
-        if (vaultDataDictionary) {
-          vaultDataDictionary = JSON.parse(vaultDataDictionary);
-        } else {
-          vaultDataDictionary = {};
-        }
-        return vaultDataDictionary;
-      },
-      setKeyMeta: function(key, config) {
-        config = config || {};
-        var vaultDataDictionary = this.getData();
-        if (!vaultDataDictionary[key]) {
-          vaultDataDictionary[key] = {};
-        }
-        if (config.expires) {
-          var expires = getExpires(config);
-          vaultDataDictionary[key].expires = expires && expires.valueOf();
-        } else {
-          delete vaultDataDictionary[key].expires;
-        }
-        if (config.path) {
-          vaultDataDictionary[key].path = config.path;
-        } else {
-          delete vaultDataDictionary[key].path;
-        }
-        storage.setItem(vaultData, prepare(vaultDataDictionary));
-      },
-      getKeyMeta: function(key) {
-        try {
-          var vaultDataDictionary = this.getData();
-          return vaultDataDictionary[key];
-        } catch(e) {
-          return undefined;
-        }
-      },
-      clearKeyMeta: function(key) {
-        try {
-          var vaultDataDictionary = this.getData();
-          delete vaultDataDictionary[key];
-          storage.setItem(vaultData, prepare(vaultDataDictionary));
-        } catch(e) {}
-      },
+      type: type,
       get: function(key, default_value) {
         var obj;
         if (storage[key]) {
-          try {
-            obj = parse(storage[key]);
-
-            var keyMeta = this.getKeyMeta(key);
-            // console.warn('keyMeta:', keyMeta);
-            if (keyMeta) {
-              if (keyMeta.path) {
-                var path = window.location.pathname || window.location.path;
-                if (!path.match(keyMeta.path)) {
-                  // console.warn('Data found for ' + key + ' but paths do not match. The browser is at ' + path + ' and the key is for ' + keyMeta.path);
-                  return default_value;
-                }
-              }
-
-              // TODO: deprecate obj.expires
-              if (!keyMeta.expires && obj.expires) {
-                keyMeta.expires = obj.expires;
-              }
-
-              if (keyMeta.expires && keyMeta.expires <= new Date()) {
-                var expired = new Date(keyMeta.expires).toString();
-                console.log('Removing expired item: ' + key + '. It expired on: ' + expired);
-                this.remove(key);
-                return default_value;
-              }
-            }
-          } catch(e) {
-            console.warn('Vault Error:', e);
+          var meta = checkKeyMeta(storage, key);
+          if (meta) {
+            return default_value;
           }
           // TODO: deprecated this with obj.expires
           if (obj && obj.value !== undefined) {
@@ -207,14 +234,17 @@ var Vault = (function() {
       },
       set: function(key, value, config) {
         try {
-          this.setKeyMeta(key, config);
+          if (type === 'sessionStorage' && config && config.expires) {
+            delete config.expires;
+          }
+          setKeyMeta(storage, key, config);
           return storage.setItem(key, prepare(value));
         } catch(e) {
           console.warn('Vault: I cannot write to localStoarge even though localStorage is supported. Perhaps you are using your browser in private mode? Here is the error: ', e);
         }
       },
       remove: function(key) {
-        this.clearKeyMeta(key);
+        clearKeyMeta(storage, key);
         return storage.removeItem(key);
       },
       clear: function() {
@@ -280,12 +310,12 @@ var Vault = (function() {
       if (config && config.domain) {
         domain = '; domain=' + config.domain;
       }
-      var path = '';
+      var cookiePath = '';
       if (config && config.path) {
-        path = '; path=' + config.path;
+        cookiePath = '; path=' + config.path;
       }
       var secure = (config && config.secure) ? '; secure' : '';
-      value = prepare(value) + path + domain + max_age + expires + secure;
+      value = prepare(value) + cookiePath + domain + max_age + expires + secure;
       console.log('Vault: set cookie "' + key + '": ' + value);
       document.cookie = key + '=' + value;
     },
@@ -315,9 +345,91 @@ var Vault = (function() {
       }
     }
   };
-  var Local = setup('localStorage');
-  var Session = setup('sessionStorage');
-  return {
+  if (mode === 'server') {
+    var fs = require('fs');
+    var path = require('path');
+    var appDir = path.dirname();
+    var _file = appDir + conf.vaultFile;
+    var cache;
+    try {
+      cache = fs.readFileSync(_file);
+    } catch(e) {
+      fs.writeFileSync(_file, JSON.stringify({}, null, 2));
+    }
+    if (cache) {
+      try {
+        cache = JSON.parse(cache);
+      } catch(e) {}
+    } else {
+      cache = {};
+    }
+    Server = {
+      type: 'Server',
+      save: function(callback) {
+        fs.writeFileSync(_file, JSON.stringify(cache, null, 2));
+      },
+      get: function(key, default_value) {
+        var meta = checkKeyMeta(this, key);
+        if (meta) {
+          return default_value;
+        }
+        return cache[key] || default_value;
+      },
+      getItem: function(key, default_value) {
+        return this.get(key, default_value);
+      },
+      getAndRemove: function(key) {
+        var value = cache[key];
+        delete cache[key];
+        this.save();
+        return value;
+      },
+      getList: function() {
+        var list = [];
+        for (var key in cache) {
+          var obj = {};
+          obj[key] = cache[key];
+          list.push(obj);
+        }
+        return list;
+      },
+      set: function(key, value, config) {
+        cache[key] = value;
+        setKeyMeta(this, key, config);
+        this.save();
+        return cache[key];
+      },
+      setItem: function(key, value, config) {
+        return this.set(key, value, config);
+      },
+      remove: function(key) {
+        try {
+          delete cache[key];
+        } catch(e) {}
+        this.save();
+      },
+      removeItem: function(key) {
+        this.remove(key);
+      },
+      clear: function() {
+        cache = {};
+        this.save();
+      },
+      list: function() {
+        for (var key in cache) {
+          console.log(key, '=', cache[key]);
+        }
+      }
+    };
+    Cookie = Server;
+    Local = Server;
+    Session = Server;
+  } else {
+    Local = setup('localStorage');
+    Session = setup('sessionStorage');
+  }
+  var v = {
+    conf: conf,
     Local: Local,
     Session: Session,
     Cookie: Cookie,
@@ -343,6 +455,10 @@ var Vault = (function() {
       }
     },
     list: function(raw) {
+      if (mode === 'server') {
+        console.log('--== Server ==--');
+        return Local.list(raw);
+      }
       console.log('--== Local ==--');
       Local.list(raw);
       console.log('--== Session ==--');
@@ -351,6 +467,9 @@ var Vault = (function() {
       Cookie.list(raw);
     },
     getLists: function() {
+      if (mode === 'server') {
+        return Local.getList();
+      }
       return {
         Local: Local.getList(),
         Session: Session.getList(),
@@ -368,6 +487,7 @@ var Vault = (function() {
       Cookie.clear();
     }
   };
+  return v;
 }());
 if (typeof module === 'object' && module.exports) {
   module.exports = Vault;

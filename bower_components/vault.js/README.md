@@ -2,11 +2,15 @@ vault.js
 ===============
 
 Wrapper for localStorage, sessionStorage, document.cookie that sets and gets true values.
-Adds some cookie functionality to localStorage. For now, just expires. More coming soon.
+Adds some cookie functionality to localStorage.
+
+### What's new
+ * [0.1.4] Support for use server-side added- writes data to .vault.json at the root level
+ * [0.1.0] localStorage and sessionStorage support the path param
 
 ### Usage
 
-#### Local, Session, Cookie
+#### Local, Session, Cookie, File
 
 ##### Vault.set(String key, Mixed value, Object optional_config)
 ```
@@ -15,7 +19,9 @@ Vault.set(String key, Mixed value, Object optional_config);
 
 ##### rules for which storage to use
 ```
-if config.expires exists and localStorage is supported, then
+if node
+  use File
+else if config.expires exists and localStorage is supported, then
   use localStorage
 else if sessionStorage is supported, then
   use sessionStorage
@@ -40,6 +46,9 @@ Vault.Local.set(...);
   path: "/",
   expires: "2014-09-25 8:24:32 pm", // or anything that can be parsed by new Date(...)
   expires: "+3 days", // works for all time increments from milliseconds to years.
+  
+  // File options
+  expires
 
   // domain and local/session storage
   local/session is natively tied to the domain. Subdomain keys can only be set from that subdomain.
@@ -49,7 +58,7 @@ Vault.Local.set(...);
 #### examples
 
 ```
-Vault.set("year", 1999); // saves in sessionStorage
+Vault.set("year", 1999); // saves in sessionStorage (browser) or to a file (server)
 
 Vault.set("year", 1999, { expires: '1999-12-31 11:59:59 pm' }); // saves in localStorage until 11:59:59 on December 31, 1999
 
@@ -68,7 +77,7 @@ Vault.Local.set("age", 33);
 ```
 
 ##### Vault.get(String key)
-Will check storage in this order: Session, Local, Cookie
+Will check storage in this order: File (if node), Session, Local, Cookie
 
 To specify which storage to get from, use:
 ```
@@ -79,7 +88,7 @@ Vault.Session.get(String key);
 
 #### examples
 ```
-Vault.get("foo"); returns from Session, else Local, else Cookie, else undefined
+Vault.get("foo"); returns from File if node, else Session, else Local, else Cookie, else undefined
 
 Vault.Session.get("foo");
 // returns "bar"
@@ -123,7 +132,7 @@ Vault.Cookie.list();
 ```
 
 #### TODO
-- add server-side storage for node- save data to a json file
+- ~~add server-side storage for node- save data to a json file~~
 - handle storage limit errors
 - add support to request more storage
 - handle storage events
