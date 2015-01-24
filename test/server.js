@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 'use strict';
 
-var Vault = require('../lib/vault.js');
+var Vault = require('../index');
 
 var args = {};
 process.argv.forEach(function (val, index, array) {

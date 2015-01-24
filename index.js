@@ -1,2 +1,2 @@
 'use strict';
-module.exports = require('./lib/vault');
+module.exports = require('./lib/file');
