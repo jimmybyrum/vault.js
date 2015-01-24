@@ -17,14 +17,14 @@ if (args.name) {
 if (args.age) {
   Vault.set('age', args.age, {expires: '+1 days'});
 }
-Vault.set('data', {
-  testing: true,
-  arrays: [1, 2],
-  objects: {
-    does: ['this', 'work', 3]
-  },
-  integers: 123
-}, {expires: '+1 days'});
+// Vault.set('data', {
+//   testing: true,
+//   arrays: [1, 2],
+//   objects: {
+//     does: ['this', 'work', 3]
+//   },
+//   integers: 123
+// }, {expires: '+1 days'});
 
 if (args.get) {
   console.log(Vault.get(args.get));
@@ -32,4 +32,6 @@ if (args.get) {
   Vault.list();
 }
 
-process.exit(0);
+setTimeout(function() {
+  process.exit(0);
+}, 1000);

@@ -1,6 +1,6 @@
 {
   "name": "vault.js",
-  "version": "0.1.5",
+  "version": "0.1.6",
   "description": "Key-Value Storage of true data types for the browser and node",
   "main": "index.js",
   "author": "Jimmy Byrum (https://github.com/jimmybyrum)",
@@ -41,5 +41,9 @@
     "gulp-md5-plus": "^0.1.6",
     "gulp-rename": "^1.2.0",
     "gulp-uglifyjs": "^0.5.0"
+  },
+  "dependencies": {
+    "q": "^1.1.2",
+    "redis": "^0.12.1"
   }
 }

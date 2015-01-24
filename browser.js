@@ -15,18 +15,23 @@ module.exports = {
     }
     return Cookie.set(key, value, config);
   },
-  get: function(key) {
-    var sess = Session.get(key);
+  get: function(key, default_value) {
+    var sess = Session.get(key, default_value);
     if (sess !== undefined) {
       return sess;
     } else {
-      var local = Local.get(key);
+      var local = Local.get(key, default_value);
       if (local !== undefined) {
         return local;
       } else {
-        return Cookie.get(key);
+        return Cookie.get(key, default_value);
       }
     }
+  },
+  getAndRemove: function(key, default_value) {
+    var value = this.get(key, default_value);
+    this.remove(key);
+    return value;
   },
   list: function(raw) {
     console.log('--== Local ==--');
