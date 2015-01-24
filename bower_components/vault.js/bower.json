@@ -1,11 +1,11 @@
 {
   "name": "vault.js",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "homepage": "http://jimmybyrum.github.io/vault.js/",
   "authors": [
     "James Byrum <me@jimmybyrum.com>"
   ],
-  "description": "Normalizer for local/sessionStorage & cookies.",
+  "description": "Key-Value Storage of true data types for the browser and node",
   "main": "dist/vault.min.js",
   "keywords": [
     "localStorage",
@@ -15,7 +15,11 @@
     "local",
     "session",
     "file",
-    "storage"
+    "store",
+    "storage",
+    "key",
+    "value",
+    "key-value"
   ],
   "license": "MIT",
   "ignore": [

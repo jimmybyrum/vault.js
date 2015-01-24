@@ -1,22 +1,38 @@
 'use strict';
 
 var gulp = require('gulp');
+var clean = require('gulp-clean');
 var eslint = require('gulp-eslint');
+var clean = require('gulp-clean');
+var rename = require('gulp-rename');
+var uglify = require('gulp-uglifyjs');
+var browserify = require('gulp-browserify');
 
-gulp.task('default', function() {
-  // place code for your default task here
+gulp.task('clean', function() {
+  gulp.src('./dist/*')
+    .pipe(clean({
+      read: false
+    }));
 });
+
+gulp.task('js', function() {
+  gulp.src('./browser.js')
+    .pipe(browserify({
+      read: false,
+      standalone: 'Vault',
+      debug: process.env.NODE_ENV === 'dev'
+    }))
+    .pipe(uglify())
+    .pipe(rename('vault.min.js'))
+    .pipe(gulp.dest('./dist'));
+});
+
+gulp.task('build', ['clean', 'js']);
 
 gulp.task('eslint', function() {
   return gulp.src([
     './*.js',
-    'handlers/*.js',
-    'lib/*.js',
-    'models/**/*.js',
-    'public/js/*.js',
-    'routes/*.js',
-    'scripts/*.js',
-    'server/*.js'
+    'lib/*.js'
   ])
     .pipe(eslint())
     .pipe(eslint.format())

@@ -1,12 +1,35 @@
 vault.js
 ===============
 
-Wrapper for localStorage, sessionStorage, document.cookie that sets and gets true values.
-Adds some cookie functionality to localStorage.
+Vault is an API to store Key-Value pairs as true data types. It can utilize localStorage, sessionStorage, and cookies in the Browser. In node, it uses a file at the root of the project (redis support coming soon).
 
-### What's new
+It will handle toString and fromString conversion, so store those JSON objects, arrays, booleans, and numbers wherever you like and you'll get true data types back.
+
+```
+npm install vault.js
+```
+```
+bower install vault.js
+```
+
+### What's new!
  * [0.1.4] Support for use server-side added- writes data to .vault.json at the root level
  * [0.1.0] localStorage and sessionStorage support the path param
+
+### What's next?
+- add redis as a storage option
+- ~~add server-side storage for node- save data to a json file~~
+- handle storage limit errors
+- add support to request more storage
+- handle storage events
+
+### Run/Develop locally
+```
+git clone git@github.com:jimmybyrum/vault.js.git
+cd vault.js
+npm install
+npm run build
+```
 
 ### Usage
 
@@ -46,7 +69,7 @@ Vault.Local.set(...);
   path: "/",
   expires: "2014-09-25 8:24:32 pm", // or anything that can be parsed by new Date(...)
   expires: "+3 days", // works for all time increments from milliseconds to years.
-  
+
   // File options
   expires
 
@@ -130,9 +153,3 @@ Vault.Session.list();
 Vault.Local.list();
 Vault.Cookie.list();
 ```
-
-#### TODO
-- ~~add server-side storage for node- save data to a json file~~
-- handle storage limit errors
-- add support to request more storage
-- handle storage events
