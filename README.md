@@ -1,9 +1,11 @@
 vault.js
 ===============
 
+## Key-Value Storage of true data types for the browser and node
+
 Vault is an API to store Key-Value pairs as true data types. It can utilize localStorage, sessionStorage, and cookies in the Browser. In node, it uses a file at the root of the project (redis support coming soon).
 
-It will handle toString and fromString conversion, so store those JSON objects, arrays, booleans, and numbers wherever you like and you'll get true data types back.
+It handles JSON objects, arrays, booleans, numbers, and even returns undefined and null accurately.
 
 ```
 npm install vault.js
