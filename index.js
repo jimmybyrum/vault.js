@@ -1,2 +1,6 @@
 'use strict';
-module.exports = require('./lib/file');
+if (typeof window !== 'undefined') {
+  module.exports = require('./browser');
+} else {
+  module.exports = require('./lib/file');
+}
