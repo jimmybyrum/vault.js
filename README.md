@@ -1,5 +1,6 @@
 vault.js
 ===============
+[![](https://travis-ci.org/jimmybyrum/vault.js.svg)](https://travis-ci.org/jimmybyrum/vault.js)
 
 ## Key-Value Storage of true data types for the browser and node
 
