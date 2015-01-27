@@ -20,10 +20,10 @@ bower install vault.js
 
 ### What's next?
 - add redis as a storage option
-- ~~add server-side storage for node- save data to a json file~~
 - handle storage limit errors
 - add support to request more storage
 - handle storage events
+- ~~add server-side storage for node- save data to a json file~~
 
 ### Run/Develop locally
 ```
