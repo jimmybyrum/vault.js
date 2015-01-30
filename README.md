@@ -1,5 +1,6 @@
 vault.js [![](https://travis-ci.org/jimmybyrum/vault.js.svg)](https://travis-ci.org/jimmybyrum/vault.js)
 ===============
+[![NPM](https://nodei.co/npm/vault.js.png?downloads=true&downloadRank=true&stars=true)](https://nodei.co/npm/vault.js/)
 
 ## Key-Value Storage of true data types for the browser and node
 
