@@ -14,6 +14,9 @@ npm install vault.js
 ```
 bower install vault.js
 ```
+```
+<script src="//cdnjs.cloudflare.com/ajax/libs/vault.js/0.1.7/vault.min.js"></script>
+```
 
 ### What's new!
  * [0.1.4] Support for use server-side added- writes data to .vault.json at the root level
