@@ -1,5 +1,6 @@
 vault.js [![](https://travis-ci.org/jimmybyrum/vault.js.svg)](https://travis-ci.org/jimmybyrum/vault.js)
 ===============
+[![NPM](https://nodei.co/npm/vault.js.png?downloads=true&downloadRank=true&stars=true)](https://nodei.co/npm/vault.js/)
 
 ## Key-Value Storage of true data types for the browser and node
 
@@ -12,6 +13,9 @@ npm install vault.js
 ```
 ```
 bower install vault.js
+```
+```
+<script src="//cdnjs.cloudflare.com/ajax/libs/vault.js/0.1.7/vault.min.js"></script>
 ```
 
 ### What's new!
