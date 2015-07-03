@@ -67,7 +67,7 @@ var checkKeyMeta = function(storage, key) {
     var keyMeta = getKeyMeta(storage, key);
     // console.warn('keyMeta:', keyMeta);
     if (keyMeta) {
-      if (keyMeta.path) {
+      if (keyMeta.path && typeof window !== 'undefined') {
         var storagePath = window.location.pathname || window.location.path;
         if (!storagePath.match(keyMeta.path)) {
           // console.warn('Data found for ' + key + ' but paths do not match. The browser is at ' + path + ' and the key is for ' + keyMeta.path);

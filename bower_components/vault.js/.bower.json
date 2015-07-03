@@ -1,6 +1,6 @@
 {
   "name": "vault.js",
-  "version": "0.1.5",
+  "version": "0.1.9",
   "homepage": "http://jimmybyrum.github.io/vault.js/",
   "authors": [
     "James Byrum <me@jimmybyrum.com>"
@@ -29,13 +29,14 @@
     "test",
     "tests"
   ],
-  "_release": "0.1.5",
+  "_release": "0.1.9",
   "_resolution": {
     "type": "version",
-    "tag": "0.1.5",
-    "commit": "85ccb98c39ebec0371f83040c6495defba0849a5"
+    "tag": "0.1.9",
+    "commit": "e5ff3ecc1f7523ebb5f7020e246c532e74cc77bd"
   },
   "_source": "git://github.com/jimmybyrum/vault.js.git",
-  "_target": "~0.1.0",
-  "_originalSource": "vault.js"
+  "_target": "~0.1.9",
+  "_originalSource": "vault.js",
+  "_direct": true
 }

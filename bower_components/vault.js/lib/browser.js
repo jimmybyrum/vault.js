@@ -18,24 +18,20 @@ var setup = function(type) {
   } catch(e) {
     storage = undefined;
   }
-  if ( ! storage) {
+  if (!storage) {
     // console.warn('Vault: ' + type + ' is not suppored. I will attempt to use Cookies instead.');
     return Cookie;
   }
   return {
     type: type,
     get: function(key, default_value) {
-      var obj;
       if (storage[key]) {
         var keyMeta = meta.checkKeyMeta(storage, key);
         if (keyMeta) {
           return default_value;
         }
-        // TODO: deprecated this with obj.expires
-        if (obj && obj.value !== undefined) {
-          return parse(obj.value);
-        }
-        return parse(storage[key]);
+        var value = parse(storage[key]);
+        return value.value || value;
       }
       return default_value;
     },

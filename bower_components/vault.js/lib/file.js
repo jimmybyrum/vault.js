@@ -3,9 +3,10 @@ var conf = require('./config');
 var meta = require('./meta');
 var fs = require('fs');
 var path = require('path');
-var appDir = path.dirname();
+var appDir = path.dirname(require.main.filename);
 var _file = appDir + conf.vaultFile;
 var cache;
+console.log('Vault File:', _file);
 try {
   cache = fs.readFileSync(_file);
 } catch(e) {

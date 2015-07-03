@@ -1,15 +1,21 @@
-vault.js
+vault.js [![](https://travis-ci.org/jimmybyrum/vault.js.svg)](https://travis-ci.org/jimmybyrum/vault.js)
 ===============
+[![NPM](https://nodei.co/npm/vault.js.png?downloads=true&downloadRank=true&stars=true)](https://nodei.co/npm/vault.js/)
+
+## Key-Value Storage of true data types for the browser and node
 
 Vault is an API to store Key-Value pairs as true data types. It can utilize localStorage, sessionStorage, and cookies in the Browser. In node, it uses a file at the root of the project (redis support coming soon).
 
-It will handle toString and fromString conversion, so store those JSON objects, arrays, booleans, and numbers wherever you like and you'll get true data types back.
+It handles JSON objects, arrays, booleans, numbers, and even returns undefined and null accurately.
 
 ```
 npm install vault.js
 ```
 ```
 bower install vault.js
+```
+```
+<script src="//cdnjs.cloudflare.com/ajax/libs/vault.js/0.1.8/vault.min.js"></script>
 ```
 
 ### What's new!
@@ -18,10 +24,10 @@ bower install vault.js
 
 ### What's next?
 - add redis as a storage option
-- ~~add server-side storage for node- save data to a json file~~
 - handle storage limit errors
 - add support to request more storage
 - handle storage events
+- ~~add server-side storage for node- save data to a json file~~
 
 ### Run/Develop locally
 ```

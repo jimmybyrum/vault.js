@@ -3,7 +3,6 @@
 var gulp = require('gulp');
 var clean = require('gulp-clean');
 var eslint = require('gulp-eslint');
-var clean = require('gulp-clean');
 var rename = require('gulp-rename');
 var uglify = require('gulp-uglifyjs');
 var browserify = require('gulp-browserify');
