@@ -1,3 +1,5 @@
 node_modules/
 account/
 .vault*
+Gemfile.lock
+_site
