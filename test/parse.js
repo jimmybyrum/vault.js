@@ -35,7 +35,9 @@ describe('parse', function() {
         }
       }
     });
-    next();
+    setTimeout(function() {
+      next();
+    }, 1000);
   });
 
   describe('string', function () {
