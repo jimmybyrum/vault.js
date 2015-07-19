@@ -43,6 +43,12 @@ gulp.task('eslint', function() {
   );
 });
 
+gulp.task('watch', function() {
+  gulp.watch([
+    './lib/*.js'
+  ], ['js']);
+});
+
 process.on('uncaughtException', function(err) {
   console.log(err);
   console.log('Stacktrace:');

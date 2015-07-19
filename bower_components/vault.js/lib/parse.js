@@ -29,7 +29,12 @@ module.exports = function(value) {
     return value * 1;
   }
   if (value.indexOf && (value.indexOf('{') === 0 || value.indexOf('[') === 0)) {
-    return JSON.parse(value);
+    try {
+      return JSON.parse(value);
+    } catch (e) {
+      console.warn('Parse error', value);
+      return value;
+    }
   }
   return value;
 };
