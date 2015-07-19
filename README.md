@@ -15,7 +15,7 @@ npm install vault.js
 bower install vault.js
 ```
 ```
-<script src="//cdnjs.cloudflare.com/ajax/libs/vault.js/0.1.9/vault.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/vault.js/0.1.11/vault.min.js"></script>
 ```
 
 ### What's new!
