@@ -1,9 +1,11 @@
 'use strict';
+var version = require('./package.json').version;
 var Cookie = require('./lib/browser').Cookie;
 var Local = require('./lib/browser').Local;
 var Session = require('./lib/browser').Session;
 
 module.exports = {
+  version: version,
   Cookie: Cookie,
   Local: Local,
   Session: Session,
