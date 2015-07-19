@@ -1,4 +1,5 @@
 'use strict';
+var pkg = require('../package.json');
 var conf = require('./config');
 var meta = require('./meta');
 var fs = require('fs');
@@ -20,6 +21,7 @@ if (cache) {
   cache = {};
 }
 var File = {
+  version: pkg.version,
   type: 'File',
   save: function(callback) {
     fs.writeFileSync(_file, JSON.stringify(cache, null, 2));

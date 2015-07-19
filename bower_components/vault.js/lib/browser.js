@@ -1,4 +1,5 @@
 'use strict';
+var pkg = require('../package.json');
 var meta = require('./meta');
 var Cookie = require('./cookie');
 var prepare = require('./prepare');
@@ -23,6 +24,7 @@ var setup = function(type) {
     return Cookie;
   }
   return {
+    version: pkg.version,
     type: type,
     get: function(key, default_value) {
       if (storage[key]) {

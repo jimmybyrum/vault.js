@@ -6,6 +6,7 @@ var eslint = require('gulp-eslint');
 var rename = require('gulp-rename');
 var uglify = require('gulp-uglifyjs');
 var browserify = require('gulp-browserify');
+var mocha = require('gulp-mocha');
 
 gulp.task('clean', function() {
   gulp.src('./dist/*')
@@ -41,6 +42,12 @@ gulp.task('eslint', function() {
       }
     }
   );
+});
+
+gulp.task('mocha', function() {
+  return gulp.src('./test/parse.js', {
+    read: false
+  }).pipe(mocha());
 });
 
 gulp.task('watch', function() {
