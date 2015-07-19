@@ -1,5 +1,5 @@
 'use strict';
-var pkg = require('../package.json');
+var version = require('../package.json').version;
 var meta = require('./meta');
 var Cookie = require('./cookie');
 var prepare = require('./prepare');
@@ -24,7 +24,6 @@ var setup = function(type) {
     return Cookie;
   }
   return {
-    version: pkg.version,
     type: type,
     get: function(key, default_value) {
       if (storage[key]) {
@@ -83,6 +82,7 @@ var setup = function(type) {
   };
 };
 module.exports = {
+  version: version,
   Local: setup('localStorage'),
   Session: setup('sessionStorage'),
   Cookie: Cookie
