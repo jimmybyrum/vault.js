@@ -31,7 +31,7 @@ var setup = function(type) {
           return default_value;
         }
         var value = parse(storage[key]);
-        return value.value || value;
+        return (value && value.value) || value;
       }
       return default_value;
     },
@@ -50,6 +50,9 @@ var setup = function(type) {
       return list;
     },
     set: function(key, value, config) {
+      if (!key) {
+        return console.warn('Vault: set was called with no key.', key);
+      }
       try {
         if (type === 'sessionStorage' && config && config.expires) {
           delete config.expires;

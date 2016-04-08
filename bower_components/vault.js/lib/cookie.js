@@ -38,6 +38,9 @@ var Cookie = {
     return list;
   },
   set: function(key, value, config) {
+    if (!key) {
+      return console.warn('Vault: set was called with no key.', key);
+    }
     var expires = '';
     if (config && config.expires) {
       var exp = getExpires(config);
