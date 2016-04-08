@@ -9,7 +9,6 @@
     "no-underscore-dangle": 0,
     "no-new": 0,
     "no-process-exit": 0,
-    "no-use-before-define": 0,
     "no-path-concat": 0,
     "no-loop-func": 0
   },
