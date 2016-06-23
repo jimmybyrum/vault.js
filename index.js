@@ -22,6 +22,7 @@ if (typeof window !== 'undefined') {
     Memory: Memory,
 
     set: function(key, value, config) {
+      module.exports.remove(key);
       if (config && config.expires && config.expires === 'session') {
         return Memory.set(key, value, config);
       }
@@ -33,8 +34,10 @@ if (typeof window !== 'undefined') {
     list: function(raw) {
       console.log('--== Memory ==--');
       Memory.list(raw);
+      console.log('----------------');
       console.log('--== File ==--');
       File.list(raw);
+      console.log('----------------');
     },
     getLists: function() {
       return {

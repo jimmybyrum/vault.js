@@ -18,12 +18,12 @@ module.exports = {
   setIntervalLength: cleanup.setIntervalLength,
 
   set: function(key, value, config) {
+    // console.log('set', key, value, config);
+    module.exports.remove(key);
     if (config && config.expires && config.expires === 'session') {
-      return Session.set(key, value, config);
-    } else {
-      return Local.set(key, value, config);
+      Session.set(key, value, config);
     }
-    return Cookie.set(key, value, config);
+    Local.set(key, value, config);
   },
   get: function(key) {
     return Memory.get(key) || Session.get(key) || Local.get(key) || Cookie.get(key);
@@ -31,12 +31,16 @@ module.exports = {
   list: function(raw) {
     console.log('--== Memory ==--');
     Memory.list(raw);
+    console.log('----------------');
     console.log('--== Session ==--');
     Session.list(raw);
+    console.log('----------------');
     console.log('--== Local ==--');
     Local.list(raw);
+    console.log('----------------');
     console.log('--== Cookie ==--');
     Cookie.list(raw);
+    console.log('----------------');
   },
   getLists: function() {
     return {
