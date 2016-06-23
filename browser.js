@@ -4,6 +4,7 @@ var Cookie = require('./lib/browser').Cookie;
 var Local = require('./lib/browser').Local;
 var Session = require('./lib/browser').Session;
 var Memory = require('./lib/memory');
+var cleanup = require('./lib/cleanup');
 
 module.exports = {
   version: version,
@@ -11,11 +12,16 @@ module.exports = {
   Local: Local,
   Session: Session,
   Memory: Memory,
+
+  startCleanup: cleanup.start,
+  stopCleanup: cleanup.stop,
+  setIntervalLength: cleanup.setIntervalLength,
+
   set: function(key, value, config) {
-    if (config && config.expires) {
-      return Local.set(key, value, config);
-    } else {
+    if (config && config.expires && config.expires === 'session') {
       return Session.set(key, value, config);
+    } else {
+      return Local.set(key, value, config);
     }
     return Cookie.set(key, value, config);
   },
@@ -53,3 +59,5 @@ module.exports = {
     Cookie.clear();
   }
 };
+
+cleanup.start([Cookie, Local, Session, Memory]);
