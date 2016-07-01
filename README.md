@@ -159,3 +159,31 @@ Vault.Session.list();
 Vault.Local.list();
 Vault.Cookie.list();
 ```
+
+### Webpack
+
+To use Vault.js with webpack you'll need to use json-loader.
+
+```
+npm i --save json-loader
+```
+
+Then in webpack config:
+
+```
+  module: {
+    loaders: [
+      {test: /\.json$/, loader: "json-loader" }
+    ]
+  },
+```
+
+You may also want to set up an alias so your require statements are a bit cleaner:
+
+```
+  resolve: {
+    alias: {
+      'vault.js': 'vault.js/browser.js'
+    }
+  }
+```  
