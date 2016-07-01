@@ -3,137 +3,132 @@
 var Vault = require('../index');
 var assert = require('assert');
 
+function runTest(testType, key, value, opts, callback) {
+  ['Memory', 'File'].forEach(function(type) {
+    describe(type + ':' + testType, function() {
+      Vault[type].set(key, value, opts);
+      var returnedValue = Vault[type].get(key);
+      callback(type, testType, returnedValue);
+    });
+  });
+}
+
 describe('parse', function() {
 
-  describe('string', function () {
-    Vault.set('name', 'jimmy');
-    var name = Vault.get('name');
-    it('should be a typeof string', function () {
-      assert.equal('string', typeof name);
+  runTest('string', 'name', 'jimmy', {}, function(type, testType, returnedValue) {
+    it('should be a typeof ' + testType, function() {
+      assert.equal(testType, typeof returnedValue);
     });
-    it('should return a string', function () {
-      assert.equal('jimmy', name);
+    it('should return a ' + testType, function() {
+      assert.equal('jimmy', returnedValue);
     });
   });
 
-  describe('number', function () {
-    Vault.set('age', 33);
-    var age = Vault.get('age');
-    it('should be a typeof number', function () {
-      assert.equal('number', typeof age);
+  runTest('number', 'age', 33, {}, function(type, testType, returnedValue) {
+    it('should be a typeof ' + testType, function() {
+      assert.equal(testType, typeof returnedValue);
     });
-    it('should return a number', function () {
-      assert.equal(33, age);
+    it('should return a ' + testType, function() {
+      assert.equal(33, returnedValue);
     });
   });
 
-  describe('array', function () {
-    Vault.set('cities', [
-      'Pittsburgh',
-      'San Jose',
-      'London',
-      'Porvenir',
-      'Cambridge',
-      'San Francisco'
-    ]);
-    var cities = Vault.get('cities');
-    it('should be a typeof object', function () {
-      assert.equal('object', typeof cities);
+  runTest('array', 'cities', [
+    'Pittsburgh',
+    'San Jose',
+    'London',
+    'Porvenir',
+    'Cambridge',
+    'San Francisco'
+  ], {}, function(type, testType, returnedValue) {
+    it('should be a typeof object', function() {
+      assert.equal('object', typeof returnedValue);
     });
-    it('should have array length', function () {
-      assert.equal(6, cities.length);
+    it('should have array length', function() {
+      assert.equal(6, returnedValue.length);
     });
-    it('should return an array item', function () {
-      assert.equal('San Francisco', cities[5]);
+    it('should return an array item', function() {
+      assert.equal('San Francisco', returnedValue[5]);
     });
   });
 
-  describe('object', function () {
-    Vault.set('libs', {
-      'vault.js': 'https://github.com/jimmybyrum/vault.js',
-      'voice-commands.js': 'https://github.com/jimmybyrum/voice-commands.js'
+  runTest('object', 'libs', {
+    'vault.js': 'https://github.com/jimmybyrum/vault.js',
+    'voice-commands.js': 'https://github.com/jimmybyrum/voice-commands.js'
+  }, {}, function(type, testType, returnedValue) {
+    it('should be a typeof object', function() {
+      assert.equal('object', typeof returnedValue);
     });
-    var libs = Vault.get('libs');
-    it('should be a typeof object', function () {
-      assert.equal('object', typeof libs);
+    it('should return the key', function() {
+      assert.equal('vault.js', Object.keys(returnedValue)[0]);
     });
-    it('should return the key', function () {
-      assert.equal('vault.js', Object.keys(libs)[0]);
-    });
-    it('should return the value', function () {
-      assert.equal('https://github.com/jimmybyrum/vault.js', libs['vault.js']);
+    it('should return the value', function() {
+      assert.equal('https://github.com/jimmybyrum/vault.js', returnedValue['vault.js']);
     });
   });
 
-  describe('deep object', function () {
-    Vault.set('deep', {
-      name: 'James',
-      age: 33,
-      cities: {
-        pgh: {
-          name: 'Pittsburgh',
-          founded: 1758,
-          teams: [
-            'Penguins',
-            'Steelers',
-            'Pirates'
-          ]
-        }
+  runTest('deep object', 'deep', {
+    name: 'James',
+    age: 33,
+    cities: {
+      pgh: {
+        name: 'Pittsburgh',
+        founded: 1758,
+        teams: [
+          'Penguins',
+          'Steelers',
+          'Pirates'
+        ]
       }
+    }
+  }, {}, function(type, testType, returnedValue) {
+    it('should be a typeof object', function() {
+      assert.equal('object', typeof returnedValue);
     });
-    var deep = Vault.get('deep');
-    it('should be a typeof object', function () {
-      assert.equal('object', typeof deep);
+    it('should return the key', function() {
+      assert.equal('pgh', Object.keys(returnedValue.cities)[0]);
     });
-    it('should return the key', function () {
-      assert.equal('pgh', Object.keys(deep.cities)[0]);
+    it('should return the value', function() {
+      assert.equal(1758, returnedValue.cities.pgh.founded);
     });
-    it('should return the value', function () {
-      assert.equal(1758, deep.cities.pgh.founded);
-    });
-    it('should return a value from a nested array', function () {
-      assert.equal('Penguins', deep.cities.pgh.teams[0]);
-    });
-  });
-
-  describe('default_value', function () {
-    var notThere = Vault.get('notThere', 'A Default Value');
-    it('should be a typeof string', function () {
-      assert.equal('string', typeof notThere);
-    });
-    it('should return the default_value', function () {
-      assert.equal('A Default Value', notThere);
+    it('should return a value from a nested array', function() {
+      assert.equal('Penguins', returnedValue.cities.pgh.teams[0]);
     });
   });
 
-  describe('get and remove', function () {
-    Vault.set('oneTimeOnly', 'only once');
-    var oneTimeOnly = Vault.getAndRemove('oneTimeOnly');
-    it('should be a typeof string', function () {
-      assert.equal('string', typeof oneTimeOnly);
+  runTest('default_value', 'notThere', 'A Default Value', {}, function(type, testType, returnedValue) {
+    it('should be a typeof string', function() {
+      assert.equal('string', typeof returnedValue);
     });
-    it('should return a string', function () {
-      assert.equal('only once', oneTimeOnly);
-    });
-    it('should return undefined when called a second time', function () {
-      assert.equal(undefined, Vault.get('oneTimeOnly'));
+    it('should return the default_value', function() {
+      assert.equal('A Default Value', returnedValue);
     });
   });
 
-  describe('expires', function () {
-    Vault.set('thisVarExpiresSoon', 'expiring soon', {
-      expires: '+1 seconds'
+  runTest('get and remove', 'oneTimeOnly', 'only once', {}, function(type, testType, returnedValue) {
+    it('should be a typeof string', function() {
+      assert.equal('string', typeof returnedValue);
     });
-    var expires = Vault.get('thisVarExpiresSoon');
-    it('should be a typeof string', function () {
-      assert.equal('string', typeof expires);
+    it('should return a string', function() {
+      assert.equal('only once', returnedValue);
     });
-    it('should return a string', function () {
-      assert.equal('expiring soon', expires);
+    it('should return undefined when called a second time', function() {
+      assert.equal(undefined, Vault[type].get('returnedValue'));
+    });
+  });
+
+  runTest('expires', 'thisVarExpiresSoon', 'expiring soon', {
+    expires: '+1 seconds'
+  }, function(type, testType, returnedValue) {
+    it('should be a typeof string', function() {
+      assert.equal('string', typeof returnedValue);
+    });
+    it('should return a string', function() {
+      assert.equal('expiring soon', returnedValue);
     });
     it('should return undefined after waiting 1 second', function (done) {
       setTimeout(function() {
-        assert.equal(undefined, Vault.get('thisVarExpiresSoon'));
+        assert.equal(undefined, Vault[type].get('thisVarExpiresSoon'));
         done();
       }, 1000);
     });

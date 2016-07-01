@@ -15,19 +15,20 @@ npm install vault.js
 bower install vault.js
 ```
 ```
-<script src="//cdnjs.cloudflare.com/ajax/libs/vault.js/0.1.13/vault.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/vault.js/1.0.0/vault.min.js"></script>
 ```
 
 ### What's new!
+ * [1.0.0] Memory Storage. Automatic cleanup (expired items removed in the background). Moves data from one storage to another if the same var is set with different config.
  * [0.1.4] Support for use server-side added- writes data to .vault.json at the root level
  * [0.1.0] localStorage and sessionStorage support the path param
 
 ### What's next?
-- add redis as a storage option
-- handle storage limit errors
-- add support to request more storage
-- handle storage events
-- ~~add server-side storage for node- save data to a json file~~
+- [ ] add redis as a storage option
+- [ ] handle storage limit errors
+- [ ] add support to request more storage
+- [ ] handle storage events
+- [x] add server-side storage for node- save data to a json file
 
 ### Run/Develop locally
 ```
@@ -39,7 +40,7 @@ npm run build
 
 ### Usage
 
-#### Local, Session, Cookie, File
+#### Local, Session, Cookie, File, Memory
 
 ##### Vault.set(String key, Mixed value, Object optional_config)
 ```
@@ -49,7 +50,10 @@ Vault.set(String key, Mixed value, Object optional_config);
 ##### rules for which storage to use
 ```
 if node
-  use File
+  if config.expires exists and equals "session"
+    use Memory
+  else
+    use File
 else if config.expires exists and localStorage is supported, then
   use localStorage
 else if sessionStorage is supported, then
@@ -59,9 +63,14 @@ else
 ```
 or, if you want to specify which storage to use:
 ```
+// client side
 Vault.Cookie.set(...);
 Vault.Session.set(...);
 Vault.Local.set(...);
+
+// server side
+Vault.File.set(...);
+Vault.Memory.set(...);
 ```
 
 ##### optional_config
@@ -76,7 +85,7 @@ Vault.Local.set(...);
   expires: "2014-09-25 8:24:32 pm", // or anything that can be parsed by new Date(...)
   expires: "+3 days", // works for all time increments from milliseconds to years.
 
-  // File options
+  // File and Memory options
   expires
 
   // domain and local/session storage
@@ -87,59 +96,65 @@ Vault.Local.set(...);
 #### examples
 
 ```
-Vault.set("year", 1999); // saves in sessionStorage (browser) or to a file (server)
+Vault.set("year", 1999); // saves in localStorage (browser) or to a file (server)
+
+Vault.set("year", 1999, { expires: 'session' }); // saves in sessionStorage (browser) or in Memory (server)
 
 Vault.set("year", 1999, { expires: '1999-12-31 11:59:59 pm' }); // saves in localStorage until 11:59:59 on December 31, 1999
 
-Vault.Session.set("foo", "bar");
-Vault.Session.set("foo", "bar", {
-  expires: "+6 months",
-  path: "/examples"
+Vault.Session.set('foo', 'bar');
+Vault.Session.set('foo', 'bar', {
+  expires: '+6 months',
+  path: '/examples'
 });
-Vault.Local.set("my_array", [1,2,3,4]);
-Vault.Cookie.set("my_object", {
-  foo: "bar",
+Vault.Local.set('my_array', [1,2,3,4]);
+Vault.Cookie.set('my_object', {
+  foo: 'bar',
   an_array: [1,2,3],
   year: 2012
 });
-Vault.Local.set("age", 33);
+Vault.Local.set('age', 33);
 ```
 
 ##### Vault.get(String key)
-Will check storage in this order: File (if node), Session, Local, Cookie
+Will check storage in this order: Memory, File (if node), Session, Local, Cookie
 
 To specify which storage to get from, use:
 ```
 Vault.Cookie.get(String key);
 Vault.Local.get(String key);
 Vault.Session.get(String key);
+Vault.File.get(String key);
+Vault.Memory.get(String key);
 ```
 
 #### examples
 ```
-Vault.get("foo"); returns from File if node, else Session, else Local, else Cookie, else undefined
+Vault.get('foo'); returns from Memory, else File (if node), else Session, else Local, else Cookie, else undefined
 
-Vault.Session.get("foo");
-// returns "bar"
-Vault.Local.get("my_array");
+Vault.Session.get('foo');
+// returns 'bar'
+Vault.Local.get('my_array');
 // [1,2,3,4]
-Vault.Cookie.get("my_object");
+Vault.Cookie.get('my_object');
 // {
-//   foo: "bar",
+//   foo: 'bar',
 //   an_array: [1,2,3],
 //   year: 2012
 // }
-Vault.Local.get("age");
+Vault.Local.get('age');
 // returns the number 33
 ```
 
 ##### remove
 removes an item
 ```
-Vault.remove("my_object"); // removes from all storage types
-Vault.Session.remove("my_object");
-Vault.Local.remove("my_array");
-Vault.Cookie.remove("my_array");
+Vault.remove('my_object'); // removes from all storage types
+Vault.Session.remove('my_object');
+Vault.Local.remove('my_array');
+Vault.Cookie.remove('my_array');
+Vault.File.remove('my_array');
+Vault.Memory.remove('my_array');
 ```
 
 ##### clear
@@ -149,6 +164,8 @@ Vault.clear(); // clears all storage types
 Vault.Session.clear();
 Vault.Local.clear();
 Vault.Cookie.clear();
+Vault.File.clear();
+Vault.Memory.clear();
 ```
 
 ##### list
@@ -158,6 +175,8 @@ Vault.list(); // lists all storage types
 Vault.Session.list();
 Vault.Local.list();
 Vault.Cookie.list();
+Vault.File.list();
+Vault.Memory.list();
 ```
 
 ### Webpack
@@ -186,4 +205,4 @@ You may also want to set up an alias so your require statements are a bit cleane
       'vault.js': 'vault.js/browser.js'
     }
   }
-```  
+```
