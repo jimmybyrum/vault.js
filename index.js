@@ -25,9 +25,10 @@ if (typeof window !== 'undefined') {
     set: function(key, value, config) {
       module.exports.remove(key);
       if (config && config.expires && config.expires === 'session') {
-        return Memory.set(key, value, config);
+        Memory.set(key, value, config);
+      } else {
+        File.set(key, value, config);
       }
-      return File.set(key, value, config);
     },
     get: function(key) {
       return Memory.get(key) || File.get(key);

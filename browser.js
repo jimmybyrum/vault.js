@@ -19,9 +19,12 @@ module.exports = {
   getIntervalLength: cleanup.getIntervalLength,
 
   set: function(key, value, config) {
-    // console.log('set', key, value, config);
     module.exports.remove(key);
-    if (config && config.expires && config.expires === 'session') {
+    var expires = config && config.expires;
+    // console.log('set', key, value, 'expires:', expires);
+    if (expires === 'page') {
+      Memory.set(key, value, config);
+    } else if (expires === 'session') {
       Session.set(key, value, config);
     } else {
       Local.set(key, value, config);
