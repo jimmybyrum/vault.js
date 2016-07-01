@@ -18,6 +18,7 @@ if (typeof window !== 'undefined') {
     startCleanup: cleanup.start,
     stopCleanup: cleanup.stop,
     setIntervalLength: cleanup.setIntervalLength,
+    getIntervalLength: cleanup.getIntervalLength,
     File: File.init(_file),
     Memory: Memory,
 

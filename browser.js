@@ -16,6 +16,7 @@ module.exports = {
   startCleanup: cleanup.start,
   stopCleanup: cleanup.stop,
   setIntervalLength: cleanup.setIntervalLength,
+  getIntervalLength: cleanup.getIntervalLength,
 
   set: function(key, value, config) {
     // console.log('set', key, value, config);
