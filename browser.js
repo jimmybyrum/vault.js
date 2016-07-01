@@ -23,8 +23,9 @@ module.exports = {
     module.exports.remove(key);
     if (config && config.expires && config.expires === 'session') {
       Session.set(key, value, config);
+    } else {
+      Local.set(key, value, config);
     }
-    Local.set(key, value, config);
   },
   get: function(key) {
     return Memory.get(key) || Session.get(key) || Local.get(key) || Cookie.get(key);

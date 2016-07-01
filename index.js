@@ -30,7 +30,7 @@ if (typeof window !== 'undefined') {
       return File.set(key, value, config);
     },
     get: function(key) {
-      return File.get(key) || Memory.get(key);
+      return Memory.get(key) || File.get(key);
     },
     list: function(raw) {
       console.log('--== Memory ==--');
