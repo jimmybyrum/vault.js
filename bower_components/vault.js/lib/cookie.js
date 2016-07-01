@@ -60,7 +60,7 @@ var Cookie = {
     }
     var secure = (config && config.secure) ? '; secure' : '';
     value = prepare(value) + cookiePath + domain + max_age + expires + secure;
-    console.log('Vault: set cookie "' + key + '": ' + value);
+    // console.log('Vault: set cookie "' + key + '": ' + value);
     document.cookie = key + '=' + value;
   },
   remove: function(key, config) {

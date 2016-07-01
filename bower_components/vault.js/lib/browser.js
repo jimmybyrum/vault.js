@@ -1,4 +1,5 @@
 'use strict';
+
 var meta = require('./meta');
 var Cookie = require('./cookie');
 var prepare = require('./prepare');
@@ -19,7 +20,7 @@ var setup = function(type) {
     storage = undefined;
   }
   if (!storage) {
-    // console.warn('Vault: ' + type + ' is not suppored. I will attempt to use Cookies instead.');
+    console.warn('Vault: ' + type + ' is not suppored. I will attempt to use Cookies instead.');
     return Cookie;
   }
   return {
@@ -44,8 +45,11 @@ var setup = function(type) {
       var list = [];
       for (var i in storage) {
         var item = {};
-        item[i] = this.get(i);
-        list.push(item);
+        var value = this.get(i);
+        if (value) {
+          item[i] = value;
+          list.push(item);
+        }
       }
       return list;
     },
@@ -54,9 +58,9 @@ var setup = function(type) {
         return console.warn('Vault: set was called with no key.', key);
       }
       try {
-        if (type === 'sessionStorage' && config && config.expires) {
-          delete config.expires;
-        }
+        // if (type === 'sessionStorage' && config && config.expires) {
+        //   delete config.expires;
+        // }
         meta.setKeyMeta(storage, key, config);
         return storage.setItem(key, prepare(value));
       } catch(e) {
@@ -73,12 +77,14 @@ var setup = function(type) {
     list: function(raw) {
       var i, il = storage.length;
       if (il === 0) {
-        console.log('0 items in ' + type);
+        console.log('0 items in', type);
         return undefined;
       }
       for (i in storage) {
-        var value = raw ? parse(storage[i]) : this.get(i);
-        console.log(i, '=', value);
+        if (i !== '__vaultData') {
+          var value = raw ? parse(storage[i]) : this.get(i);
+          console.log(i, '=', value);
+        }
       }
     }
   };
