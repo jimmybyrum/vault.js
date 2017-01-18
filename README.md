@@ -78,6 +78,7 @@ Vault.Memory.set(...);
   // Cookie options.
   domain: ".jimmybyrum.com",
   secure: true,
+  encodeCookieValues: true,
 
   // Cookie and Local options
   path: "/",
