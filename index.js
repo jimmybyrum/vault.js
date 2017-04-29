@@ -14,15 +14,15 @@ if (typeof window !== 'undefined') {
   var Memory = require('./lib/memory');
   console.log('Vault (' + version + ') File:', _file);
   module.exports = {
-    version: version,
+    version,
     startCleanup: cleanup.start,
     stopCleanup: cleanup.stop,
     setIntervalLength: cleanup.setIntervalLength,
     getIntervalLength: cleanup.getIntervalLength,
     File: File.init(_file),
-    Memory: Memory,
+    Memory,
 
-    set: function(key, value, config) {
+    set(key, value, config) {
       module.exports.remove(key);
       if (config && config.expires && config.expires === 'session') {
         Memory.set(key, value, config);
@@ -30,10 +30,10 @@ if (typeof window !== 'undefined') {
         File.set(key, value, config);
       }
     },
-    get: function(key) {
+    get(key) {
       return Memory.get(key) || File.get(key);
     },
-    list: function(raw) {
+    list(raw) {
       console.log('--== Memory ==--');
       Memory.list(raw);
       console.log('----------------');
@@ -41,17 +41,17 @@ if (typeof window !== 'undefined') {
       File.list(raw);
       console.log('----------------');
     },
-    getLists: function() {
+    getLists() {
       return {
         Memory: Memory.getList(),
         File: File.getList()
       };
     },
-    remove: function(key) {
+    remove(key) {
       Memory.remove(key);
       File.remove(key);
     },
-    clear: function() {
+    clear() {
       Memory.clear();
       File.clear();
     }

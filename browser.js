@@ -7,18 +7,18 @@ var Memory = require('./lib/memory');
 var cleanup = require('./lib/cleanup');
 
 module.exports = {
-  version: version,
-  Cookie: Cookie,
-  Local: Local,
-  Session: Session,
-  Memory: Memory,
+  version,
+  Cookie,
+  Local,
+  Session,
+  Memory,
 
   startCleanup: cleanup.start,
   stopCleanup: cleanup.stop,
   setIntervalLength: cleanup.setIntervalLength,
   getIntervalLength: cleanup.getIntervalLength,
 
-  set: function(key, value, config) {
+  set(key, value, config) {
     module.exports.remove(key);
     var expires = config && config.expires;
     // console.log('set', key, value, 'expires:', expires);
@@ -30,10 +30,10 @@ module.exports = {
       Local.set(key, value, config);
     }
   },
-  get: function(key) {
+  get(key) {
     return Memory.get(key) || Session.get(key) || Local.get(key) || Cookie.get(key);
   },
-  list: function(raw) {
+  list(raw) {
     console.log('--== Memory ==--');
     Memory.list(raw);
     console.log('----------------');
@@ -47,7 +47,7 @@ module.exports = {
     Cookie.list(raw);
     console.log('----------------');
   },
-  getLists: function() {
+  getLists() {
     return {
       Memory: Memory.getList(),
       Session: Session.getList(),
@@ -55,13 +55,13 @@ module.exports = {
       Cookie: Cookie.getList()
     };
   },
-  remove: function(key) {
+  remove(key) {
     Memory.remove(key);
     Session.remove(key);
     Local.remove(key);
     Cookie.remove(key);
   },
-  clear: function() {
+  clear() {
     Memory.clear();
     Session.clear();
     Local.clear();
