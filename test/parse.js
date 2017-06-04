@@ -24,6 +24,15 @@ describe('parse', function() {
     });
   });
 
+  runTest('string', 'empty-string', '', {}, function(type, testType, returnedValue) {
+    it('should be an empty typeof ' + testType, function() {
+      assert.equal(testType, typeof returnedValue);
+    });
+    it('should return an empty ' + testType, function() {
+      assert.equal('', returnedValue);
+    });
+  });
+
   runTest('number', 'age', 33, {}, function(type, testType, returnedValue) {
     it('should be a typeof ' + testType, function() {
       assert.equal(testType, typeof returnedValue);
