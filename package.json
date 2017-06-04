@@ -1,6 +1,6 @@
 {
   "name": "vault.js",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Key-Value Storage of true data types for the browser and node",
   "main": "index.js",
   "author": "Jimmy Byrum (https://github.com/jimmybyrum)",
@@ -15,7 +15,7 @@
   "homepage": "http://jimmybyrum.github.io/vault.js/",
   "scripts": {
     "test": "alias gulp='node_modules/gulp/bin/gulp.js';gulp eslint;mocha ./test;",
-    "build": "alias gulp='node_modules/gulp/bin/gulp.js';gulp build && ls -al dist/"
+    "build": "alias gulp='node_modules/gulp/bin/gulp.js';gulp build && ls -alh dist/"
   },
   "keywords": [
     "localStorage",

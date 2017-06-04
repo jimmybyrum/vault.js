@@ -15,6 +15,66 @@ function runTest(testType, key, value, opts, callback) {
 
 describe('parse', function() {
 
+  var key = 'storage';
+  describe('Vault.get', function() {
+    Vault.remove(key);
+
+    var memValue = 'in memory';
+    var fileValue = 'in file';
+
+    Vault.Memory.set(key, memValue);
+    var returnedMemory = Vault.get(key);
+    it('should get key from Memory storage', function() {
+      assert.equal(memValue, returnedMemory);
+    });
+
+    Vault.Memory.remove(key);
+    Vault.File.set(key, fileValue);
+    var returnedFile = Vault.get(key);
+    it('should get key from File storage', function() {
+      assert.equal(fileValue, returnedFile);
+    });
+  });
+
+  describe('Vault.remove', function() {
+    Vault.remove(key);
+    var returnedValue = Vault.get(key);
+    it('should return nothing', function() {
+      assert.equal(undefined, returnedValue);
+    });
+  });
+
+  describe('Vault.set (session)', function() {
+    var value = 'session data';
+    Vault.set(key, value, {
+      expires: 'session'
+    });
+    var returnedValue = Vault.Memory.get(key);
+    it('should return data from memory storage', function() {
+      assert.equal(value, returnedValue);
+    });
+  });
+
+  describe('Vault.set (expires)', function() {
+    var value = 'session data';
+    Vault.set(key, value, {
+      expires: '+1 second'
+    });
+    var returnedValue = Vault.File.get(key);
+    it('should return data from file storage', function() {
+      assert.equal(value, returnedValue);
+    });
+  });
+
+  describe('Vault.getLists', function() {
+    var returnedValue = Vault.getLists();
+    it('should return Memory and File storage', function() {
+      var memExists = typeof returnedValue.Memory === 'object';
+      var fileExists = typeof returnedValue.File === 'object';
+      assert.equal(true, memExists && fileExists);
+    });
+  });
+
   runTest('string', 'name', 'jimmy', {}, function(type, testType, returnedValue) {
     it('should be a typeof ' + testType, function() {
       assert.equal(testType, typeof returnedValue);
