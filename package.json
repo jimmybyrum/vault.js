@@ -1,6 +1,6 @@
 {
   "name": "vault.js",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Key-Value Storage of true data types for the browser and node",
   "main": "index.js",
   "author": "Jimmy Byrum (https://github.com/jimmybyrum)",
