@@ -31,7 +31,16 @@ if (typeof window !== 'undefined') {
       }
     },
     get: function(key) {
-      return Memory.get(key) || File.get(key);
+      var types = [
+        Memory,
+        File
+      ];
+      for (var i = 0; i < types.length; i++) {
+        var value = types[i].get(key);
+        if (value !== undefined) {
+          return value;
+        }
+      }
     },
     list: function(raw) {
       console.log('--== Memory ==--');

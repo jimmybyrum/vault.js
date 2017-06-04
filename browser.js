@@ -31,7 +31,18 @@ module.exports = {
     }
   },
   get: function(key) {
-    return Memory.get(key) || Session.get(key) || Local.get(key) || Cookie.get(key);
+    var types = [
+      Memory,
+      Session,
+      Local,
+      Cookie
+    ];
+    for (var i = 0; i < types.length; i++) {
+      var value = types[i].get(key);
+      if (value !== undefined) {
+        return value;
+      }
+    }
   },
   list: function(raw) {
     console.log('--== Memory ==--');
