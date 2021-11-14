@@ -1,69 +1,89 @@
-'use strict';
+import { vaultFile } from './lib/config.js';
+import { start, stop, setIntervalLength, getIntervalLength } from './lib/cleanup.js';
+import path from 'path';
+import File from './lib/file.js';
+import _Memory from './lib/memory.js';
+import VaultBrowser from './browser.js';
+import { readFileSync } from 'fs';
+const pkg = JSON.parse(readFileSync('./package.json'));
 
-var version = require('./package.json').version;
+const isBrowser = typeof window !== 'undefined';
 
-if (typeof window !== 'undefined') {
-  module.exports = require('./browser');
-} else {
-  var conf = require('./lib/config');
-  var cleanup = require('./lib/cleanup');
-  var path = require('path');
-  var appDir = path.dirname((require.main && require.main.filename) || '.');
-  var _file = appDir + conf.vaultFile;
-  var File = require('./lib/file');
-  var Memory = require('./lib/memory');
-  console.log('Vault (' + version + ') File:', _file);
-  module.exports = {
-    version: version,
-    startCleanup: cleanup.start,
-    stopCleanup: cleanup.stop,
-    setIntervalLength: cleanup.setIntervalLength,
-    getIntervalLength: cleanup.getIntervalLength,
-    File: File.init(_file),
-    Memory: Memory,
+export let _File;
+export let Memory = _Memory;
 
-    set: function(key, value, config) {
-      module.exports.remove(key);
-      if (config && config.expires && config.expires === 'session') {
-        Memory.set(key, value, config);
-      } else {
-        File.set(key, value, config);
-      }
-    },
-    get: function(key) {
-      var types = [
-        Memory,
-        File
-      ];
-      for (var i = 0; i < types.length; i++) {
-        var value = types[i].get(key);
-        if (value !== undefined) {
-          return value;
-        }
-      }
-    },
-    list: function(raw) {
-      console.log('--== Memory ==--');
-      Memory.list(raw);
-      console.log('----------------');
-      console.log('--== File ==--');
-      File.list(raw);
-      console.log('----------------');
-    },
-    getLists: function() {
-      return {
-        Memory: Memory.getList(),
-        File: File.getList()
-      };
-    },
-    remove: function(key) {
-      Memory.remove(key);
-      File.remove(key);
-    },
-    clear: function() {
-      Memory.clear();
-      File.clear();
+if (!isBrowser) {
+  const appDir = path.dirname('.');
+  const _file = appDir + vaultFile;
+  console.log('Vault (' + pkg.version + ') File:', _file);
+  _File = File.init(_file);
+  start([File, Memory]);
+}
+
+export const Browser = VaultBrowser;
+
+const Vault = {
+  version: pkg.version,
+  File: _File,
+  Memory: Memory,
+  startCleanup: start,
+  stopCleanup: stop,
+  setIntervalLength: setIntervalLength,
+  getIntervalLength: getIntervalLength,
+  set: _set,
+  get: _get,
+  list: _list,
+  getLists: _getLists,
+  remove: _remove,
+  clear: _clear
+};
+export default Vault;
+
+function _set(key, value, config) {
+  _remove(key);
+  if (config && config.expires && config.expires === 'session') {
+    Memory.set(key, value, config);
+  } else {
+    File.set(key, value, config);
+  }
+}
+
+function _get(key) {
+  const types = [
+    Memory,
+    File
+  ];
+  let i;
+  for (i = 0; i < types.length; i++) {
+    const value = types[i].get(key);
+    if (value !== undefined) {
+      return value;
     }
+  }
+}
+
+function _list(raw) {
+  console.log('--== Memory ==--');
+  Memory.list(raw);
+  console.log('----------------');
+  console.log('--== File ==--');
+  File.list(raw);
+  console.log('----------------');
+}
+
+function _getLists() {
+  return {
+    Memory: Memory.getList(),
+    File: File.getList()
   };
-  cleanup.start([File, Memory]);
+}
+
+function _remove(key) {
+  Memory.remove(key);
+  File.remove(key);
+}
+
+function _clear() {
+  Memory.clear();
+  File.clear();
 }

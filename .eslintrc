@@ -12,10 +12,14 @@
     "no-path-concat": 0,
     "no-loop-func": 0
   },
+  "parserOptions": {
+    "sourceType": "module"
+  },
   "globals": {
   },
   "env":{
     "browser": true,
-    "node": true
+    "node": true,
+    "es6": true
   }
 }

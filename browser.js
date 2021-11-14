@@ -1,26 +1,24 @@
-'use strict';
-var version = require('./package.json').version;
-var Cookie = require('./lib/browser').Cookie;
-var Local = require('./lib/browser').Local;
-var Session = require('./lib/browser').Session;
-var Memory = require('./lib/memory');
-var cleanup = require('./lib/cleanup');
+import { Cookie, Local, Session } from './lib/browser.js';
+import Memory from './lib/memory.js';
+import { start, stop, setIntervalLength, getIntervalLength } from './lib/cleanup.js';
+import { readFileSync } from 'fs';
+const pkg = JSON.parse(readFileSync('./package.json'));
 
-module.exports = {
-  version: version,
+export default {
+  version: pkg.version,
   Cookie: Cookie,
   Local: Local,
   Session: Session,
   Memory: Memory,
 
-  startCleanup: cleanup.start,
-  stopCleanup: cleanup.stop,
-  setIntervalLength: cleanup.setIntervalLength,
-  getIntervalLength: cleanup.getIntervalLength,
+  startCleanup: start,
+  stopCleanup: stop,
+  setIntervalLength: setIntervalLength,
+  getIntervalLength: getIntervalLength,
 
   set: function(key, value, config) {
     module.exports.remove(key);
-    var expires = config && config.expires;
+    const expires = config && config.expires;
     // console.log('set', key, value, 'expires:', expires);
     if (expires === 'page') {
       Memory.set(key, value, config);
@@ -31,14 +29,15 @@ module.exports = {
     }
   },
   get: function(key) {
-    var types = [
+    const types = [
       Memory,
       Session,
       Local,
       Cookie
     ];
-    for (var i = 0; i < types.length; i++) {
-      var value = types[i].get(key);
+    let i;
+    for (i = 0; i < types.length; i++) {
+      const value = types[i].get(key);
       if (value !== undefined) {
         return value;
       }
@@ -80,4 +79,4 @@ module.exports = {
   }
 };
 
-cleanup.start([Cookie, Local, Session, Memory]);
+start([Cookie, Local, Session, Memory]);

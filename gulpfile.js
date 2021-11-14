@@ -1,20 +1,20 @@
-'use strict';
+import gulp from 'gulp';
+import clean from 'gulp-clean';
+import eslint from 'gulp-eslint';
+import rename from 'gulp-rename';
+import uglify from 'gulp-uglify';
+import browserify from 'gulp-browserify';
 
-var gulp = require('gulp');
-var clean = require('gulp-clean');
-var eslint = require('gulp-eslint');
-var rename = require('gulp-rename');
-var uglify = require('gulp-uglifyjs');
-var browserify = require('gulp-browserify');
+let fail = false;
 
-gulp.task('clean', function() {
+gulp.task('clean', () => {
   gulp.src('./dist/*')
     .pipe(clean({
       read: false
     }));
 });
 
-gulp.task('js', function() {
+gulp.task('js', () => {
   gulp.src('./browser.js')
     .pipe(browserify({
       read: false,
@@ -26,9 +26,9 @@ gulp.task('js', function() {
     .pipe(gulp.dest('./dist'));
 });
 
-gulp.task('build', ['clean', 'js']);
+// gulp.task('build', ['clean', 'js'], () => {});
 
-gulp.task('eslint', function() {
+gulp.task('eslint', () => {
   return gulp.src([
     './*.js',
     'lib/*.js'
@@ -37,13 +37,13 @@ gulp.task('eslint', function() {
     .pipe(eslint.format())
     .on('data', function(file) {
       if (file.eslint.messages && file.eslint.messages.length) {
-        gulp.fail = true;
+        fail = true;
       }
     }
   );
 });
 
-gulp.task('watch', function() {
+gulp.task('watch', () => {
   gulp.watch([
     './lib/*.js'
   ], ['js']);
@@ -56,8 +56,8 @@ process.on('uncaughtException', function(err) {
   process.exit(1);
 });
 
-process.on('exit', function() {
-  if (gulp.fail) {
+process.on('exit', () => {
+  if (fail) {
     process.exit(1);
   }
 });
