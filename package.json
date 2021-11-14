@@ -15,7 +15,7 @@
   },
   "homepage": "http://jimmybyrum.github.io/vault.js/",
   "scripts": {
-    "test": "alias gulp='node_modules/gulp/bin/gulp.js';gulp eslint;mocha ./test;",
+    "test": "alias gulp='node_modules/gulp/bin/gulp.js';gulp eslint;mocha ./test --exit;",
     "build": "alias gulp='node_modules/gulp/bin/gulp.js';gulp build && ls -alh dist/"
   },
   "keywords": [
