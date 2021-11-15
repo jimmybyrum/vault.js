@@ -1,30 +1,27 @@
-import { vaultFile } from './lib/config.js';
 import { start, stop, setIntervalLength, getIntervalLength } from './lib/cleanup.js';
-import path from 'path';
-import File from './lib/file.js';
+import _File from './lib/file.js';
 import _Memory from './lib/memory.js';
-import VaultBrowser from './browser.js';
+import _Browser from './browser.js';
 import { readFileSync } from 'fs';
+
 const pkg = JSON.parse(readFileSync('./package.json'));
+console.log(`Vault (${pkg.version})`);
 
 const isBrowser = typeof window !== 'undefined';
 
-export let _File;
+export let File = _File;
 export let Memory = _Memory;
+export const Browser = _Browser;
 
 if (!isBrowser) {
-  const appDir = path.dirname('.');
-  const _file = appDir + vaultFile;
-  console.log('Vault (' + pkg.version + ') File:', _file);
-  _File = File.init(_file);
   start([File, Memory]);
+} else {
+  _File.init();
 }
-
-export const Browser = VaultBrowser;
 
 const Vault = {
   version: pkg.version,
-  File: _File,
+  File: File,
   Memory: Memory,
   startCleanup: start,
   stopCleanup: stop,

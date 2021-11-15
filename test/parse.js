@@ -1,5 +1,6 @@
 import Vault from '../index.js';
 import { equal } from 'assert';
+import { unlinkSync } from 'fs';
 
 function runTest(testType, key, value, opts, callback) {
   ['Memory', 'File'].forEach(type => {
@@ -13,6 +14,16 @@ function runTest(testType, key, value, opts, callback) {
 
 describe('parse', () => {
 
+  after(function() {
+    const vaultFile = Vault.File.getFile();
+    if (vaultFile) {
+      console.log(`Removing ${vaultFile}`);
+      try {
+        unlinkSync(vaultFile);
+      } catch(e) {}
+    }
+  });
+
   const key = 'storage';
   describe('Vault.get', () => {
     Vault.remove(key);
@@ -25,8 +36,8 @@ describe('parse', () => {
     it('should get key from Memory storage', () => {
       equal(memValue, returnedMemory);
     });
-
     Vault.Memory.remove(key);
+    
     Vault.File.set(key, fileValue);
     const returnedFile = Vault.get(key);
     it('should get key from File storage', () => {
