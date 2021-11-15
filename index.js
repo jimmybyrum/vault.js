@@ -3,8 +3,7 @@ import _File from './lib/file.js';
 import _Memory from './lib/memory.js';
 import _Browser from './browser.js';
 import { readFileSync } from 'fs';
-
-const pkg = JSON.parse(readFileSync('./package.json'));
+const pkg = JSON.parse(readFileSync(new URL('package.json', import.meta.url)));
 console.log(`Vault (${pkg.version})`);
 
 const isBrowser = typeof window !== 'undefined';

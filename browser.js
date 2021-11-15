@@ -2,7 +2,7 @@ import { Cookie, Local, Session } from './lib/browser.js';
 import Memory from './lib/memory.js';
 import { start, stop, setIntervalLength, getIntervalLength } from './lib/cleanup.js';
 import { readFileSync } from 'fs';
-const pkg = JSON.parse(readFileSync('./package.json'));
+const pkg = JSON.parse(readFileSync(new URL('package.json', import.meta.url)));
 
 export default {
   version: pkg.version,
