@@ -15,8 +15,6 @@ export const Browser = _Browser;
 
 if (!isBrowser) {
   start([File, Memory]);
-} else {
-  _File.init();
 }
 
 const Vault = {
