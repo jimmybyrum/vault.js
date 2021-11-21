@@ -1,9 +1,9 @@
 import { Cache } from '../types';
 
 let typesCache: Cache = [];
-let running: boolean = true;
+let running = true;
 let timeout: any;
-let intervalLength: number = 5000;
+let intervalLength = 5000;
 
 let hasWarned = false;
 export const start = (types: any) => {

@@ -19,7 +19,7 @@ export const setKeyMeta = function(storage: Storage, key: string, config: Config
     return false;
   }
   config = config || {};
-  let vaultDataDictionary = getData(storage);
+  const vaultDataDictionary = getData(storage);
   if (!vaultDataDictionary[key]) {
     vaultDataDictionary[key] = {};
   }
@@ -52,7 +52,7 @@ export const clearKeyMeta = function(storage: Storage, key: string) {
     return false;
   }
   try {
-    let vaultDataDictionary = getData(storage);
+    const vaultDataDictionary = getData(storage);
     delete vaultDataDictionary[key];
     storage.setItem(vaultData, prepare(vaultDataDictionary));
   } catch (e) {
@@ -65,7 +65,7 @@ export const checkKeyMeta = function(storage: any, key: string) {
   try {
     const obj = parse(storage[key]);
 
-    let keyMeta = getKeyMeta(storage, key);
+    const keyMeta = getKeyMeta(storage, key);
     // console.warn('keyMeta:', keyMeta);
     if (keyMeta) {
       if (keyMeta.path && typeof window !== 'undefined') {

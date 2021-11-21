@@ -5,9 +5,11 @@ import prepare from './prepare';
 import parse from './parse';
 import { Cache, Config, Storage } from '../types';
 
+export const Cookie = VaultCookie;
+
 const setup = function(type: any) {
   // @ts-ignore
-  let storage: Storage = window[type];
+  const storage: Storage = window[type];
   try {
     const testKey = 'vault-test';
     storage.setItem(testKey, 'bar');
@@ -43,10 +45,10 @@ const setup = function(type: any) {
       return value;
     },
     getList: () => {
-      let list = [];
+      const list = [];
       let i;
       for (i in storage) {
-        let item: Cache = {};
+        const item: Cache = {};
         item[i] = storage.get(i);
         list.push(item);
       }
@@ -80,7 +82,8 @@ const setup = function(type: any) {
       return storage.clear();
     },
     list: (raw: boolean) => {
-      let i, il = storage.length;
+      const il = storage.length;
+      let i;
       if (il === 0) {
         console.log('0 items in', type);
         return undefined;
@@ -96,4 +99,3 @@ const setup = function(type: any) {
 };
 export const Local = setup('localStorage');
 export const Session = setup('sessionStorage');
-export const Cookie = VaultCookie;

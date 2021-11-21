@@ -6,7 +6,7 @@ export default function(config: Config = {}) {
   }
   // looking for something like: "+5 days"
   if (config.expires.match(/^(\+|\-)\d+\s\w+/)) {
-    let expires: any = new Date();
+    const expires: any = new Date();
     const operator = config.expires.substring(0, 1);
     const parts = config.expires.substring(1).split(' ');
     const num = parseInt(parts[0], 10);
@@ -49,4 +49,4 @@ export default function(config: Config = {}) {
     return expires;
   }
   return new Date(config.expires);
-};
+}

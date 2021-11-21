@@ -55,9 +55,10 @@ const File: Storage = {
     return value;
   },
   getList: function() {
-    let list = [], key: string;
+    const list = [];
+    let key: string;
     for (key in cache) {
-      let obj: Cache = {};
+      const obj: Cache = {};
       obj[key] = this.get(key);
       list.push(obj);
     }

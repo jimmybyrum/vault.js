@@ -32,15 +32,15 @@ const Cookie: Cookie = {
     return value;
   },
   getList: function() {
-    let list = [];
+    const list = [];
     if (isBrowser && document.cookie !== '') {
       const cookies = document.cookie.split(';');
       const cl = cookies.length;
       let c;
       for (c = 0; c < cl; c++) {
-        let pair = cookies[c].split('=');
+        const pair = cookies[c].split('=');
         pair[0] = pair[0].replace(/^[ ]/, '');
-        let item: Cache = {};
+        const item: Cache = {};
         item[pair[0]] = this.parse(pair[1]);
         list.push(item);
       }
@@ -90,7 +90,7 @@ const Cookie: Cookie = {
     const cl = cookies.length;
     let c;
     for (c = 0; c < cl; c++) {
-      let pair = cookies[c].split('=');
+      const pair = cookies[c].split('=');
       pair[0] = pair[0].replace(/^[ ]/, '');
       this.remove(pair[0]);
     }

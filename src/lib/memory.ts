@@ -27,9 +27,10 @@ const Memory: Storage = {
     return value;
   },
   getList: function() {
-    let list = [], key;
+    const list = [];
+    let key;
     for (key in cache) {
-      let obj: Cache = {};
+      const obj: Cache = {};
       obj[key] = this.get(key);
       list.push(obj);
     }
