@@ -1,24 +1,26 @@
 import path from 'path';
-import { vaultFile } from './config.js';
-import { checkKeyMeta, setKeyMeta } from './meta.js';
-import { vaultData } from './config.js';
+import { vaultData, vaultFile } from './config';
+import { checkKeyMeta, setKeyMeta } from './meta';
 import { readFileSync, writeFileSync } from 'fs';
+import { Cache, Config, Storage } from '../types';
 
-let filePath;
-let cache = {};
+let filePath: string;
+let cache: Cache = {};
 
-const File = {
+const File: Storage = {
   type: 'File',
   init: function() {
     filePath = this.getFile();
     console.log(`Vault File: ${filePath}`);
     try {
       cache = readFileSync(filePath);
-    } catch(e) {}
+    } catch (e) {
+    }
     if (cache) {
       try {
-        cache = JSON.parse(cache);
-      } catch(e) {}
+        cache = JSON.parse(cache.toString());
+      } catch (e) {
+      }
     } else {
       cache = {};
     }
@@ -32,7 +34,7 @@ const File = {
     }
     writeFileSync(filePath, JSON.stringify(cache, null, 2));
   },
-  get: function(key, default_value) {
+  get: function(key: string, default_value: any = undefined) {
     const keyMeta = checkKeyMeta(this, key);
     if (keyMeta) {
       return default_value;
@@ -43,26 +45,25 @@ const File = {
     }
     return cacheKey;
   },
-  getItem: function(key, default_value) {
+  getItem: function(key: string, default_value: any = undefined) {
     return this.get(key, default_value);
   },
-  getAndRemove: function(key) {
+  getAndRemove: function(key: string) {
     const value = cache[key];
     delete cache[key];
     this.save();
     return value;
   },
   getList: function() {
-    let list = [], key;
+    let list = [], key: string;
     for (key in cache) {
-      let obj = {};
-      const value = this.get(key);
-      obj[key] = value;
+      let obj: Cache = {};
+      obj[key] = this.get(key);
       list.push(obj);
     }
     return list;
   },
-  set: function(key, value, config) {
+  set: function(key: string, value: any, config: Config) {
     if (!key) {
       return console.warn('Vault: set was called with no key.', key);
     }
@@ -71,16 +72,17 @@ const File = {
     this.save();
     return cache[key];
   },
-  setItem: function(key, value, config) {
+  setItem: function(key: string, value: any, config: Config) {
     return this.set(key, value, config);
   },
-  remove: function(key) {
+  remove: function(key: string) {
     try {
       delete cache[key];
-    } catch(e) {}
+    } catch (e) {
+    }
     this.save();
   },
-  removeItem: function(key) {
+  removeItem: function(key: string) {
     this.remove(key);
   },
   clear: function() {

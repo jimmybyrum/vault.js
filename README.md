@@ -200,7 +200,7 @@ You may also want to set up an alias so your require statements are a bit cleane
 ```
   resolve: {
     alias: {
-      'vault.js': 'vault.js/browser.js'
+      'vault.js': 'vault.js/browser.ts'
     }
   }
 ```

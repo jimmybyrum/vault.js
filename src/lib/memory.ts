@@ -1,12 +1,13 @@
-import { checkKeyMeta, setKeyMeta } from './meta.js';
-import parse from './parse.js';
-import { vaultData } from './config.js';
+import { checkKeyMeta, setKeyMeta } from './meta';
+import parse from './parse';
+import { vaultData } from './config';
+import { Cache, Config, Storage } from '../types';
 
-let cache = {};
+let cache: Cache = {};
 
-const Memory = {
+const Memory: Storage = {
   type: 'Memory',
-  get: function(key, default_value) {
+  get: function(key: string, default_value: any = undefined) {
     const keyMeta = checkKeyMeta(this, key);
     if (keyMeta) {
       return default_value;
@@ -17,10 +18,10 @@ const Memory = {
     }
     return parse(cacheKey);
   },
-  getItem: function(key, default_value) {
+  getItem: function(key: string, default_value: any = undefined) {
     return this.get(key, default_value);
   },
-  getAndRemove: function(key) {
+  getAndRemove: function(key: string) {
     const value = cache[key];
     delete cache[key];
     return value;
@@ -28,14 +29,13 @@ const Memory = {
   getList: function() {
     let list = [], key;
     for (key in cache) {
-      let obj = {};
-      const value = this.get(key);
-      obj[key] = value;
+      let obj: Cache = {};
+      obj[key] = this.get(key);
       list.push(obj);
     }
     return list;
   },
-  set: function(key, value, config) {
+  set: function(key: string, value: any, config: Config) {
     if (!key) {
       return console.warn('Vault: set was called with no key.', key);
     }
@@ -43,15 +43,16 @@ const Memory = {
     setKeyMeta(this, key, config);
     return cache[key];
   },
-  setItem: function(key, value, config) {
+  setItem: function(key: string, value: any, config: Config) {
     return this.set(key, value, config);
   },
-  remove: function(key) {
+  remove: function(key: string) {
     try {
       delete cache[key];
-    } catch(e) {}
+    } catch (e) {
+    }
   },
-  removeItem: function(key) {
+  removeItem: function(key: string) {
     this.remove(key);
   },
   clear: function() {

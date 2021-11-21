@@ -1,35 +1,29 @@
-import { checkKeyMeta, setKeyMeta, clearKeyMeta } from './meta.js';
-import { vaultData } from './config.js';
-import VaultCookie from './cookie.js';
-import prepare from './prepare.js';
-import parse from './parse.js';
+import { checkKeyMeta, clearKeyMeta, setKeyMeta } from './meta';
+import { vaultData } from './config';
+import VaultCookie from './cookie';
+import prepare from './prepare';
+import parse from './parse';
+import { Cache, Config, Storage } from '../types';
 
-const setup = function(type) {
-  let storage;
+const setup = function(type: any) {
+  // @ts-ignore
+  let storage: Storage = window[type];
   try {
-    storage = window[type];
     const testKey = 'vault-test';
-    try {
-      /*eslint-disable*/
-      const test = storage['foo'];
-      /*eslint-enable*/
-      storage.setItem(testKey, 'bar');
-      storage.removeItem(testKey);
-    } catch(e) {
-      storage = undefined;
-    }
-  } catch(e) {
-    storage = undefined;
+    storage.setItem(testKey, 'bar');
+    storage.removeItem(testKey);
+  } catch (e) {
+    // storage = Cookie;
   }
   if (!storage) {
     if (typeof window !== 'undefined') {
-      console.warn('Vault: ' + type + ' is not suppored. I will attempt to use Cookies instead.');
+      console.warn(`Vault: ${type} is not supported. I will attempt to use Cookies instead.`);
     }
-    return VaultCookie;
+    return Cookie;
   }
   return {
     type: type,
-    get: function(key, default_value) {
+    get: (key: string, default_value: any = undefined) => {
       if (storage[key] !== undefined) {
         const keyMeta = checkKeyMeta(storage, key);
         if (keyMeta) {
@@ -40,23 +34,25 @@ const setup = function(type) {
       }
       return default_value;
     },
-    getAndRemove: function(key) {
-      const value = this.get(key);
-      this.remove(key);
+    getItem: (key: string, default_value: any = undefined) => {
+      return storage.get(key, default_value);
+    },
+    getAndRemove: (key: string) => {
+      const value = storage.get(key);
+      storage.remove(key);
       return value;
     },
-    getList: function() {
+    getList: () => {
       let list = [];
       let i;
       for (i in storage) {
-        let item = {};
-        const value = this.get(i);
-        item[i] = value;
+        let item: Cache = {};
+        item[i] = storage.get(i);
         list.push(item);
       }
       return list;
     },
-    set: function(key, value, config) {
+    set: (key: string, value: any, config: Config) => {
       if (!key) {
         return console.warn('Vault: set was called with no key.', key);
       }
@@ -66,18 +62,24 @@ const setup = function(type) {
         // }
         setKeyMeta(storage, key, config);
         return storage.setItem(key, prepare(value));
-      } catch(e) {
+      } catch (e) {
         console.warn('Vault: I cannot write to localStoarge even though localStorage is supported. Perhaps you are using your browser in private mode? Here is the error: ', e);
       }
     },
-    remove: function(key) {
+    setItem: (key: string, value: any, config: Config = {}) => {
+      storage.set(key, value, config);
+    },
+    remove: (key: string) => {
       clearKeyMeta(storage, key);
       return storage.removeItem(key);
     },
-    clear: function() {
+    removeItem: (key: string) => {
+      return storage.remove(key);
+    },
+    clear: () => {
       return storage.clear();
     },
-    list: function(raw) {
+    list: (raw: boolean) => {
       let i, il = storage.length;
       if (il === 0) {
         console.log('0 items in', type);
@@ -85,7 +87,7 @@ const setup = function(type) {
       }
       for (i in storage) {
         if (i !== vaultData) {
-          const value = raw ? parse(storage[i]) : this.get(i);
+          const value = raw ? parse(storage[i]) : storage.get(i);
           console.log(i, '=', value);
         }
       }

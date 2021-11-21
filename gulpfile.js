@@ -1,11 +1,11 @@
-import gulp from 'gulp';
-import clean from 'gulp-clean';
-import eslint from 'gulp-eslint';
-import rename from 'gulp-rename';
-import uglify from 'gulp-uglify';
-import browserify from 'browserify';
-import source from 'vinyl-source-stream';
-import buffer from 'vinyl-buffer';
+const gulp = require('gulp');
+const clean = require('gulp-clean');
+const eslint = require('gulp-eslint');
+const rename = require('gulp-rename');
+const uglify = require('gulp-uglify');
+const browserify = require('browserify');
+const source = require('vinyl-source-stream');
+const buffer = require('vinyl-buffer');
 
 let fail = false;
 
@@ -28,7 +28,7 @@ function cleanTask(cb) {
 }
 
 function jsTask(cb) {
-  browserify(['browser.js'])
+  browserify(['./build/browser.js'])
     .transform('babelify')
     .bundle()
     .pipe(source('browser.js'))
@@ -41,8 +41,8 @@ function jsTask(cb) {
 
 function eslintTask() {
   return gulp.src([
-    './*.js',
-    'lib/*.js'
+    './build/*.js',
+    './build/lib/*.js'
   ])
     .pipe(eslint())
     .pipe(eslint.format())
@@ -56,7 +56,7 @@ function eslintTask() {
 
 function watchTask() {
   gulp.watch([
-    './lib/*.js'
+    './build/lib/*.js'
   ], ['js']);
 }
 

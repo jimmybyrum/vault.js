@@ -1,11 +1,10 @@
-import { Cookie, Local, Session } from './lib/browser.js';
-import Memory from './lib/memory.js';
-import { start, stop, setIntervalLength, getIntervalLength } from './lib/cleanup.js';
-import { readFileSync } from 'fs';
-const pkg = JSON.parse(readFileSync(new URL('package.json', import.meta.url)));
+import { Cookie, Local, Session } from './lib/browser';
+import Memory from './lib/memory';
+import { start, stop, setIntervalLength, getIntervalLength } from './lib/cleanup';
+import { Config } from './types';
 
 export default {
-  version: pkg.version,
+  version: process.env.npm_package_version,
   Cookie: Cookie,
   Local: Local,
   Session: Session,
@@ -16,19 +15,19 @@ export default {
   setIntervalLength: setIntervalLength,
   getIntervalLength: getIntervalLength,
 
-  set: function(key, value, config) {
+  set: function(key: string, value: any, config: Config) {
     module.exports.remove(key);
     const expires = config && config.expires;
     // console.log('set', key, value, 'expires:', expires);
-    if (expires === 'page') {
+    if(expires === 'page') {
       Memory.set(key, value, config);
-    } else if (expires === 'session') {
+    } else if(expires === 'session') {
       Session.set(key, value, config);
     } else {
       Local.set(key, value, config);
     }
   },
-  get: function(key) {
+  get: function(key: string) {
     const types = [
       Memory,
       Session,
@@ -36,16 +35,16 @@ export default {
       Cookie
     ];
     let i;
-    for (i = 0; i < types.length; i++) {
+    for(i = 0; i < types.length; i++) {
       const value = types[i].get(key);
-      if (value !== undefined) {
+      if(value !== undefined) {
         return value;
       }
     }
   },
-  list: function(raw) {
+  list: function(raw: boolean) {
     console.log('--== Memory ==--');
-    Memory.list(raw);
+    Memory.list();
     console.log('----------------');
     console.log('--== Session ==--');
     Session.list(raw);
@@ -54,7 +53,7 @@ export default {
     Local.list(raw);
     console.log('----------------');
     console.log('--== Cookie ==--');
-    Cookie.list(raw);
+    Cookie.list();
     console.log('----------------');
   },
   getLists: function() {
@@ -65,7 +64,7 @@ export default {
       Cookie: Cookie.getList()
     };
   },
-  remove: function(key) {
+  remove: function(key: string) {
     Memory.remove(key);
     Session.remove(key);
     Local.remove(key);

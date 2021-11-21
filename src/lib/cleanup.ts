@@ -1,10 +1,12 @@
-let typesCache = [];
-let running = true;
-let timeout;
-let intervalLength = 5000;
+import { Cache } from '../types';
+
+let typesCache: Cache = [];
+let running: boolean = true;
+let timeout: any;
+let intervalLength: number = 5000;
 
 let hasWarned = false;
-export const start = types => {
+export const start = (types: any) => {
   if (!types && typesCache) {
     types = typesCache;
   } else {
@@ -13,8 +15,8 @@ export const start = types => {
   doCleanup(types);
 }
 
-function doCleanup(types) {
-  types.forEach(item => {
+function doCleanup(types: any) {
+  types.forEach((item: any) => {
     try {
       item.getList();
     } catch (e) {
@@ -40,6 +42,6 @@ export const getIntervalLength = () => {
   return intervalLength;
 }
 
-export const setIntervalLength = length => {
+export const setIntervalLength = (length: number) => {
   intervalLength = length;
 }

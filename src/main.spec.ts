@@ -1,8 +1,11 @@
-import Vault from '../index.js';
+import { Vault } from './main';
 import { equal } from 'assert';
 import { unlinkSync } from 'fs';
+import { Config } from './types';
 
-function runTest(testType, key, value, opts, callback) {
+type cb = (type: any, testType: any, returnedValue: any) => void;
+
+function runTest(testType: any, key: string, value: any, opts: Config, callback: cb) {
   ['Memory', 'File'].forEach(type => {
     describe(type + ':' + testType, () => {
       Vault[type].set(key, value, opts);
@@ -20,7 +23,8 @@ describe('parse', () => {
       console.log(`Removing ${vaultFile}`);
       try {
         unlinkSync(vaultFile);
-      } catch(e) {}
+      } catch (e) {
+      }
     }
   });
 
@@ -37,7 +41,7 @@ describe('parse', () => {
       equal(memValue, returnedMemory);
     });
     Vault.Memory.remove(key);
-    
+
     Vault.File.set(key, fileValue);
     const returnedFile = Vault.get(key);
     it('should get key from File storage', () => {

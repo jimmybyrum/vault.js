@@ -1,40 +1,45 @@
-export default function(config) {
+import { Config } from '../types';
+
+export default function(config: Config = {}) {
+  if (!config.expires) {
+    config.expires = 'session';
+  }
   // looking for something like: "+5 days"
   if (config.expires.match(/^(\+|\-)\d+\s\w+/)) {
-    let expires = new Date();
+    let expires: any = new Date();
     const operator = config.expires.substring(0, 1);
     const parts = config.expires.substring(1).split(' ');
     const num = parseInt(parts[0], 10);
     let time = parts[1];
-    switch(time) {
+    switch (time) {
       case 'millisecond':
       case 'milliseconds':
         time = 'Milliseconds';
-      break;
+        break;
       case 'second':
       case 'seconds':
         time = 'Seconds';
-      break;
+        break;
       case 'minute':
       case 'minutes':
         time = 'Minutes';
-      break;
+        break;
       case 'hour':
       case 'hours':
         time = 'Hours';
-      break;
+        break;
       case 'day':
       case 'days':
         time = 'Date';
-      break;
+        break;
       case 'month':
       case 'months':
         time = 'Month';
-      break;
+        break;
       case 'year':
       case 'years':
         time = 'FullYear';
-      break;
+        break;
     }
     if (operator === '-') {
       expires['set' + time](expires['get' + time]() - num);

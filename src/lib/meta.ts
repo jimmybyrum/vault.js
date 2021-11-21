@@ -1,9 +1,10 @@
-import { vaultData } from './config.js';
-import prepare from './prepare.js';
-import parse from './parse.js';
-import getExpires from './getExpires.js';
+import { vaultData } from './config';
+import prepare from './prepare';
+import parse from './parse';
+import getExpires from './getExpires';
+import { Config, Storage } from '../types';
 
-export const getData = function(storage) {
+export const getData = function(storage: Storage) {
   let vaultDataDictionary = storage.getItem(vaultData);
   if (!vaultDataDictionary) {
     vaultDataDictionary = {};
@@ -13,7 +14,7 @@ export const getData = function(storage) {
   }
   return vaultDataDictionary;
 };
-export const setKeyMeta = function(storage, key, config) {
+export const setKeyMeta = function(storage: Storage, key: string, config: Config) {
   if (key === vaultData) {
     return false;
   }
@@ -35,18 +36,18 @@ export const setKeyMeta = function(storage, key, config) {
   }
   storage.setItem(vaultData, prepare(vaultDataDictionary));
 };
-export const getKeyMeta = function(storage, key) {
+export const getKeyMeta = function(storage: Storage, key: string) {
   if (key === vaultData) {
     return false;
   }
   try {
     const vaultDataDictionary = getData(storage);
     return vaultDataDictionary[key];
-  } catch(e) {
+  } catch (e) {
     return undefined;
   }
 };
-export const clearKeyMeta = function(storage, key) {
+export const clearKeyMeta = function(storage: Storage, key: string) {
   if (key === vaultData) {
     return false;
   }
@@ -54,9 +55,10 @@ export const clearKeyMeta = function(storage, key) {
     let vaultDataDictionary = getData(storage);
     delete vaultDataDictionary[key];
     storage.setItem(vaultData, prepare(vaultDataDictionary));
-  } catch(e) {}
+  } catch (e) {
+  }
 };
-export const checkKeyMeta = function(storage, key) {
+export const checkKeyMeta = function(storage: any, key: string) {
   if (key === vaultData) {
     return false;
   }
@@ -67,7 +69,7 @@ export const checkKeyMeta = function(storage, key) {
     // console.warn('keyMeta:', keyMeta);
     if (keyMeta) {
       if (keyMeta.path && typeof window !== 'undefined') {
-        const storagePath = window.location.pathname || window.location.path;
+        const storagePath = window.location.pathname || window.location.pathname;
         if (!storagePath.match(keyMeta.path)) {
           // console.warn('Data found for ' + key + ' but paths do not match. The browser is at ' + path + ' and the key is for ' + keyMeta.path);
           return true;
@@ -87,7 +89,7 @@ export const checkKeyMeta = function(storage, key) {
         return true;
       }
     }
-  } catch(e) {
+  } catch (e) {
     console.warn('Vault Error:', e);
   }
   return false;
