@@ -1,4 +1,4 @@
-vault.js [![](https://travis-ci.org/jimmybyrum/vault.js.svg)](https://travis-ci.org/jimmybyrum/vault.js)
+vault.js [![run-tests](https://github.com/jimmybyrum/vault.js/actions/workflows/run-tests.yaml/badge.svg)](https://github.com/jimmybyrum/vault.js/actions/workflows/run-tests.yaml)
 ===============
 
 ## Key-Value Storage of true data types for the browser and node
