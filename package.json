@@ -16,8 +16,8 @@
   },
   "homepage": "https://jimmybyrum.github.io/vault.js/",
   "scripts": {
-    "test": "tsc && ./node_modules/.bin/eslint ./src/**/*.ts && mocha --exit",
-    "build": "tsc && node_modules/gulp/bin/gulp.js build && ls -alh dist/"
+    "test": "node_modules/typescript/bin/tsc && ./node_modules/eslint/bin/eslint.js --ignore-pattern '!node_modules/*' && mocha --exit",
+    "build": "node_modules/typescript/bin/tsc && node_modules/gulp/bin/gulp.js build && ls -alh dist/"
   },
   "keywords": [
     "localStorage",
