@@ -2,7 +2,7 @@ name: run-tests
 on: [push]
 jobs:
   run-tests:
-    runs-on: ubuntu-linux
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v2
