@@ -21,7 +21,7 @@ bower install vault.js
  * [1.0.0] Memory Storage. Automatic cleanup (expired items removed in the background). Moves data from one storage to another if the same var is set with different config.
  * [0.1.4] Support for use server-side added- writes data to .vault.json at the root level
  * [0.1.0] localStorage and sessionStorage support the path param
- * [2.0.0] Updated for ES6 modules
+ * [2.0.0] Updated to use Typescript and ES6 modules
 
 ### What's next?
 - [ ] handle storage limit errors
