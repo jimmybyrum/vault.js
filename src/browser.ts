@@ -15,19 +15,22 @@ const Vault = {
   setIntervalLength: setIntervalLength,
   getIntervalLength: getIntervalLength,
 
-  set: function(key: string, value: any, config: Config) {
-    module.exports.remove(key);
+  set: (key: string, value: any, config: Config) => {
     const expires = config && config.expires;
     // console.log('set', key, value, 'expires:', expires);
-    if(expires === 'page') {
-      Memory.set(key, value, config);
-    } else if(expires === 'session') {
-      Session.set(key, value, config);
-    } else {
-      Local.set(key, value, config);
+    switch(expires) {
+      case 'page':
+        Memory.set(key, value, config);
+      break;
+      case 'session':
+        Session.set(key, value, config);
+      break;
+      default:
+        Local.set(key, value, config);
+      break;
     }
   },
-  get: function(key: string) {
+  get: (key: string) => {
     const types = [
       Memory,
       Session,
@@ -42,7 +45,7 @@ const Vault = {
       }
     }
   },
-  list: function(raw: boolean) {
+  list: (raw: boolean) => {
     console.log('--== Memory ==--');
     Memory.list();
     console.log('----------------');
@@ -56,7 +59,7 @@ const Vault = {
     Cookie.list();
     console.log('----------------');
   },
-  getLists: function() {
+  getLists: () => {
     return {
       Memory: Memory.getList(),
       Session: Session.getList(),
@@ -64,13 +67,13 @@ const Vault = {
       Cookie: Cookie.getList()
     };
   },
-  remove: function(key: string) {
+  remove: (key: string) => {
     Memory.remove(key);
     Session.remove(key);
     Local.remove(key);
     Cookie.remove(key);
   },
-  clear: function() {
+  clear: () => {
     Memory.clear();
     Session.clear();
     Local.clear();
