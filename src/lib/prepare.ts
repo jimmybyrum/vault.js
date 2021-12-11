@@ -1,5 +1,4 @@
-'use strict';
-module.exports = function(value) {
+export default function(value: any) {
   if (value === undefined || value === null) {
     return value;
   }
@@ -22,4 +21,4 @@ module.exports = function(value) {
   }
 
   return value;
-};
+}

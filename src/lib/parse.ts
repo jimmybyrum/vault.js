@@ -1,6 +1,4 @@
-'use strict';
-
-module.exports = function(value) {
+export default function(value: any) {
   // everything in local storage is a string
   // so let's convert booleans and numbers
   // to be true booleans and numbers
@@ -34,4 +32,4 @@ module.exports = function(value) {
     }
   }
   return value;
-};
+}

@@ -1,53 +1,64 @@
-'use strict';
+const gulp = require('gulp');
+const clean = require('gulp-clean');
+const eslint = require('gulp-eslint');
+const rename = require('gulp-rename');
+const uglify = require('gulp-uglify');
+const browserify = require('browserify');
+const source = require('vinyl-source-stream');
+const buffer = require('vinyl-buffer');
 
-var gulp = require('gulp');
-var clean = require('gulp-clean');
-var eslint = require('gulp-eslint');
-var rename = require('gulp-rename');
-var uglify = require('gulp-uglifyjs');
-var browserify = require('gulp-browserify');
+let fail = false;
 
-gulp.task('clean', function() {
+gulp.task('clean', cleanTask);
+gulp.task('js', jsTask);
+gulp.task('eslint', eslintTask);
+gulp.task('watch', watchTask);
+
+gulp.task('build', cb => {
+  gulp.series('clean', 'js')();
+  cb();
+});
+
+function cleanTask(cb) {
   gulp.src('./dist/*')
     .pipe(clean({
       read: false
     }));
-});
+  cb();
+}
 
-gulp.task('js', function() {
-  gulp.src('./browser.js')
-    .pipe(browserify({
-      read: false,
-      standalone: 'Vault',
-      debug: process.env.NODE_ENV === 'dev'
-    }))
+function jsTask(cb) {
+  browserify(['./build/browser.js'])
+    .transform('babelify')
+    .bundle()
+    .pipe(source('./build/browser.js'))
+    .pipe(buffer())
     .pipe(uglify())
     .pipe(rename('vault.min.js'))
     .pipe(gulp.dest('./dist'));
-});
+  cb();
+}
 
-gulp.task('build', ['clean', 'js']);
-
-gulp.task('eslint', function() {
+function eslintTask() {
   return gulp.src([
-    './*.js',
-    'lib/*.js'
+    './build/*.js',
+    './build/lib/*.js'
   ])
     .pipe(eslint())
     .pipe(eslint.format())
     .on('data', function(file) {
       if (file.eslint.messages && file.eslint.messages.length) {
-        gulp.fail = true;
+        fail = true;
       }
     }
   );
-});
+}
 
-gulp.task('watch', function() {
+function watchTask() {
   gulp.watch([
-    './lib/*.js'
+    './build/lib/*.js'
   ], ['js']);
-});
+}
 
 process.on('uncaughtException', function(err) {
   console.log(err);
@@ -56,8 +67,8 @@ process.on('uncaughtException', function(err) {
   process.exit(1);
 });
 
-process.on('exit', function() {
-  if (gulp.fail) {
+process.on('exit', () => {
+  if (fail) {
     process.exit(1);
   }
 });

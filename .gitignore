@@ -1,5 +1,9 @@
 _site/
-index.html
 node_modules/
 .vault*
 vault.json
+build/
+.idea
+.bundle/
+Gemfile.lock
+vendor/

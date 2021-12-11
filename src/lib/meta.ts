@@ -1,11 +1,11 @@
-'use strict';
-var conf = require('./config');
-var prepare = require('./prepare');
-var parse = require('./parse');
-var getExpires = require('./getExpires');
+import { vaultData } from './config';
+import prepare from './prepare';
+import parse from './parse';
+import getExpires from './getExpires';
+import { Config, Storage } from '../types';
 
-var getData = function(storage) {
-  var vaultDataDictionary = storage.getItem(conf.vaultData);
+export const getData = function(storage: any) {
+  let vaultDataDictionary = storage.getItem(vaultData);
   if (!vaultDataDictionary) {
     vaultDataDictionary = {};
   }
@@ -14,17 +14,17 @@ var getData = function(storage) {
   }
   return vaultDataDictionary;
 };
-var setKeyMeta = function(storage, key, config) {
-  if (key === conf.vaultData) {
+export const setKeyMeta = function(storage: any, key: string, config: Config) {
+  if (key === vaultData) {
     return false;
   }
   config = config || {};
-  var vaultDataDictionary = getData(storage);
+  const vaultDataDictionary = getData(storage);
   if (!vaultDataDictionary[key]) {
     vaultDataDictionary[key] = {};
   }
   if (config.expires) {
-    var expires = getExpires(config);
+    const expires = getExpires(config);
     vaultDataDictionary[key].expires = expires && expires.valueOf();
   } else {
     delete vaultDataDictionary[key].expires;
@@ -34,41 +34,42 @@ var setKeyMeta = function(storage, key, config) {
   } else {
     delete vaultDataDictionary[key].path;
   }
-  storage.setItem(conf.vaultData, prepare(vaultDataDictionary));
+  storage.setItem(vaultData, prepare(vaultDataDictionary));
 };
-var getKeyMeta = function(storage, key) {
-  if (key === conf.vaultData) {
+export const getKeyMeta = function(storage: any, key: string) {
+  if (key === vaultData) {
     return false;
   }
   try {
-    var vaultDataDictionary = getData(storage);
+    const vaultDataDictionary = getData(storage);
     return vaultDataDictionary[key];
-  } catch(e) {
+  } catch (e) {
     return undefined;
   }
 };
-var clearKeyMeta = function(storage, key) {
-  if (key === conf.vaultData) {
+export const clearKeyMeta = function(storage: any, key: string) {
+  if (key === vaultData) {
     return false;
   }
   try {
-    var vaultDataDictionary = getData(storage);
+    const vaultDataDictionary = getData(storage);
     delete vaultDataDictionary[key];
-    storage.setItem(conf.vaultData, prepare(vaultDataDictionary));
-  } catch(e) {}
+    storage.setItem(vaultData, prepare(vaultDataDictionary));
+  } catch (e) {
+  }
 };
-var checkKeyMeta = function(storage, key) {
-  if (key === conf.vaultData) {
+export const checkKeyMeta = function(storage: any, key: string) {
+  if (key === vaultData) {
     return false;
   }
   try {
-    var obj = parse(storage[key]);
+    const obj = parse(storage[key]);
 
-    var keyMeta = getKeyMeta(storage, key);
+    const keyMeta = getKeyMeta(storage, key);
     // console.warn('keyMeta:', keyMeta);
     if (keyMeta) {
       if (keyMeta.path && typeof window !== 'undefined') {
-        var storagePath = window.location.pathname || window.location.path;
+        const storagePath = window.location.pathname || window.location.pathname;
         if (!storagePath.match(keyMeta.path)) {
           // console.warn('Data found for ' + key + ' but paths do not match. The browser is at ' + path + ' and the key is for ' + keyMeta.path);
           return true;
@@ -81,23 +82,15 @@ var checkKeyMeta = function(storage, key) {
       }
 
       if (keyMeta.expires && keyMeta.expires <= new Date()) {
-        var expired = new Date(keyMeta.expires).toString();
+        const expired = new Date(keyMeta.expires).toString();
         console.log('Removing expired item: ' + key + '. It expired on: ' + expired);
         clearKeyMeta(storage, key);
         storage.removeItem(key);
         return true;
       }
     }
-  } catch(e) {
+  } catch (e) {
     console.warn('Vault Error:', e);
   }
   return false;
-};
-
-module.exports = {
-  getData: getData,
-  setKeyMeta: setKeyMeta,
-  getKeyMeta: getKeyMeta,
-  clearKeyMeta: clearKeyMeta,
-  checkKeyMeta: checkKeyMeta
 };

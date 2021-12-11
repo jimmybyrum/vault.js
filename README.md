@@ -1,4 +1,4 @@
-vault.js [![](https://travis-ci.org/jimmybyrum/vault.js.svg)](https://travis-ci.org/jimmybyrum/vault.js)
+vault.js [![build](https://github.com/jimmybyrum/vault.js/actions/workflows/build.yaml/badge.svg)](https://github.com/jimmybyrum/vault.js/actions/workflows/build.yaml)
 ===============
 
 ## Key-Value Storage of true data types for the browser and node
@@ -21,13 +21,12 @@ bower install vault.js
  * [1.0.0] Memory Storage. Automatic cleanup (expired items removed in the background). Moves data from one storage to another if the same var is set with different config.
  * [0.1.4] Support for use server-side added- writes data to .vault.json at the root level
  * [0.1.0] localStorage and sessionStorage support the path param
+ * [2.0.0] Updated to use Typescript and ES6 modules
 
 ### What's next?
-- [ ] add redis as a storage option
 - [ ] handle storage limit errors
 - [ ] add support to request more storage
 - [ ] handle storage events
-- [x] add server-side storage for node- save data to a json file
 
 ### Run/Develop locally
 ```
@@ -201,7 +200,7 @@ You may also want to set up an alias so your require statements are a bit cleane
 ```
   resolve: {
     alias: {
-      'vault.js': 'vault.js/browser.js'
+      'vault.js': 'vault.js/browser.ts'
     }
   }
 ```
