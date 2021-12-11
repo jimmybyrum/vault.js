@@ -4,7 +4,7 @@ import parse from './parse';
 import getExpires from './getExpires';
 import { Config, Storage } from '../types';
 
-export const getData = function(storage: Storage) {
+export const getData = function(storage: any) {
   let vaultDataDictionary = storage.getItem(vaultData);
   if (!vaultDataDictionary) {
     vaultDataDictionary = {};
@@ -14,7 +14,7 @@ export const getData = function(storage: Storage) {
   }
   return vaultDataDictionary;
 };
-export const setKeyMeta = function(storage: Storage, key: string, config: Config) {
+export const setKeyMeta = function(storage: any, key: string, config: Config) {
   if (key === vaultData) {
     return false;
   }
@@ -36,7 +36,7 @@ export const setKeyMeta = function(storage: Storage, key: string, config: Config
   }
   storage.setItem(vaultData, prepare(vaultDataDictionary));
 };
-export const getKeyMeta = function(storage: Storage, key: string) {
+export const getKeyMeta = function(storage: any, key: string) {
   if (key === vaultData) {
     return false;
   }
@@ -47,7 +47,7 @@ export const getKeyMeta = function(storage: Storage, key: string) {
     return undefined;
   }
 };
-export const clearKeyMeta = function(storage: Storage, key: string) {
+export const clearKeyMeta = function(storage: any, key: string) {
   if (key === vaultData) {
     return false;
   }

@@ -3,35 +3,30 @@ import { vaultData } from './config';
 import VaultCookie from './cookie';
 import prepare from './prepare';
 import parse from './parse';
-import { Cache, Config, Storage } from '../types';
+import { Cache, Config, NativeStorage, Storage } from '../types';
 
 export const Cookie = VaultCookie;
 
 const setup = function(type: any) {
   // @ts-ignore
-  const storage: Storage = window[type];
+  const nativeStorage: NativeStorage = window[type];
   try {
     const testKey = 'vault-test';
-    storage.setItem(testKey, 'bar');
-    storage.removeItem(testKey);
+    nativeStorage.setItem(testKey, 'bar');
+    nativeStorage.removeItem(testKey);
   } catch (e) {
-    // storage = Cookie;
-  }
-  if (!storage) {
-    if (typeof window !== 'undefined') {
-      console.warn(`Vault: ${type} is not supported. I will attempt to use Cookies instead.`);
-    }
+    console.warn(`Vault: ${type} is not supported. I will attempt to use Cookies instead.`);
     return Cookie;
   }
-  return {
+  const storage: Storage = {
     type: type,
     get: (key: string, default_value: any = undefined) => {
-      if (storage[key] !== undefined) {
-        const keyMeta = checkKeyMeta(storage, key);
+      if (nativeStorage[key] !== undefined) {
+        const keyMeta = checkKeyMeta(nativeStorage, key);
         if (keyMeta) {
           return default_value;
         }
-        const value = parse(storage[key]);
+        const value = parse(nativeStorage[key]);
         return (value && value.value) || value;
       }
       return default_value;
@@ -47,9 +42,9 @@ const setup = function(type: any) {
     getList: () => {
       const list = [];
       let i;
-      for (i in storage) {
+      for (i in nativeStorage) {
         const item: Cache = {};
-        item[i] = storage.get(i);
+        item[i] = nativeStorage.getItem(i);
         list.push(item);
       }
       return list;
@@ -62,8 +57,8 @@ const setup = function(type: any) {
         // if (type === 'sessionStorage' && config && config.expires) {
         //   delete config.expires;
         // }
-        setKeyMeta(storage, key, config);
-        return storage.setItem(key, prepare(value));
+        setKeyMeta(nativeStorage, key, config);
+        return nativeStorage.setItem(key, prepare(value));
       } catch (e) {
         console.warn('Vault: I cannot write to localStoarge even though localStorage is supported. Perhaps you are using your browser in private mode? Here is the error: ', e);
       }
@@ -72,30 +67,33 @@ const setup = function(type: any) {
       storage.set(key, value, config);
     },
     remove: (key: string) => {
-      clearKeyMeta(storage, key);
-      return storage.removeItem(key);
+      clearKeyMeta(nativeStorage, key);
+      return nativeStorage.removeItem(key);
     },
     removeItem: (key: string) => {
       return storage.remove(key);
     },
     clear: () => {
-      return storage.clear();
+      return nativeStorage.clear();
     },
     list: (raw: boolean) => {
-      const il = storage.length;
+      const il = nativeStorage.length;
       let i;
       if (il === 0) {
         console.log('0 items in', type);
         return undefined;
       }
-      for (i in storage) {
-        if (i !== vaultData) {
-          const value = raw ? parse(storage[i]) : storage.get(i);
+      let counter = 0;
+      for (i in nativeStorage) {
+        if (i !== vaultData && counter < il) {
+          const value = raw ? parse(nativeStorage[i]) : storage.get(i);
           console.log(i, '=', value);
         }
+        counter++;
       }
     }
   };
+  return storage;
 };
 export const Local = setup('localStorage');
 export const Session = setup('sessionStorage');

@@ -10,6 +10,13 @@ export interface Cache {
   [key: string]: any;
 }
 
+export interface NativeStorage {
+  [key: string]: any,
+  setItem(key: string, value: string): any,
+  getItem(key: string): any,
+  removeItem(key: string): any
+}
+
 export interface Storage {
   [key: string]: any,
   type: string,

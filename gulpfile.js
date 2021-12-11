@@ -31,9 +31,9 @@ function jsTask(cb) {
   browserify(['./build/browser.js'])
     .transform('babelify')
     .bundle()
-    .pipe(source('browser.js'))
+    .pipe(source('./build/browser.js'))
     .pipe(buffer())
-    .pipe(uglify())
+    // .pipe(uglify())
     .pipe(rename('vault.min.js'))
     .pipe(gulp.dest('./dist'));
   cb();

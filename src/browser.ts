@@ -3,7 +3,7 @@ import Memory from './lib/memory';
 import { start, stop, setIntervalLength, getIntervalLength } from './lib/cleanup';
 import { Config } from './types';
 
-export default {
+const Vault = {
   version: process.env.npm_package_version,
   Cookie: Cookie,
   Local: Local,
@@ -77,5 +77,9 @@ export default {
     Cookie.clear();
   }
 };
+
+// @ts-ignore
+window.Vault = Vault;
+export default Vault;
 
 start([Cookie, Local, Session, Memory]);

@@ -72,7 +72,7 @@ const Cookie: Cookie = {
     // always encode cookie values because JSON cookie values
     // can cause problems.
     value = encodeURIComponent(prepare(value)) + cookiePath + domain + max_age + expires + secure;
-    // console.log('Vault: set cookie "' + key + '": ' + value);
+    // console.log(`Vault: set cookie "${key}": ${value}`);
     document.cookie = key + '=' + value;
   },
   setItem: function(key: string, value: any, config: Config = {}) {

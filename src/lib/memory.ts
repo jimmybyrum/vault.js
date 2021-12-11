@@ -1,11 +1,12 @@
 import { checkKeyMeta, setKeyMeta } from './meta';
+import prepare from './prepare';
 import parse from './parse';
 import { vaultData } from './config';
-import { Cache, Config, Storage } from '../types';
+import { Cache, Config, Memory } from '../types';
 
 let cache: Cache = {};
 
-const Memory: Storage = {
+const Memory: Memory = {
   type: 'Memory',
   get: function(key: string, default_value: any = undefined) {
     const keyMeta = checkKeyMeta(this, key);
@@ -40,7 +41,7 @@ const Memory: Storage = {
     if (!key) {
       return console.warn('Vault: set was called with no key.', key);
     }
-    cache[key] = value;
+    cache[key] = prepare(value);
     setKeyMeta(this, key, config);
     return cache[key];
   },
@@ -63,7 +64,8 @@ const Memory: Storage = {
     let key;
     for (key in cache) {
       if (key !== vaultData) {
-        console.log(key, '=', cache[key]);
+        const value = this.get(cache[key]);
+        console.log(`${key} = ${value}`);
       }
     }
   }
