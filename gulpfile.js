@@ -33,7 +33,7 @@ function jsTask(cb) {
     .bundle()
     .pipe(source('./build/browser.js'))
     .pipe(buffer())
-    // .pipe(uglify())
+    .pipe(uglify())
     .pipe(rename('vault.min.js'))
     .pipe(gulp.dest('./dist'));
   cb();

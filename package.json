@@ -16,7 +16,7 @@
   },
   "homepage": "https://jimmybyrum.github.io/vault.js/",
   "scripts": {
-    "test": "node_modules/typescript/bin/tsc && ./node_modules/eslint/bin/eslint.js --ignore-pattern '!node_modules/*' && mocha --exit",
+    "test": "node_modules/typescript/bin/tsc && ./node_modules/eslint/bin/eslint.js --ignore-pattern '!node_modules/*' && mocha -s 3200 --exit",
     "build": "node_modules/typescript/bin/tsc && node_modules/gulp/bin/gulp.js build && ls -alh dist/",
     "serve": "cp ./dist/vault.min.js ./pages/vault.min.js && bundle exec jekyll serve"
   },
